@@ -25,7 +25,7 @@
             android:ellipsize="middle"
             android:singleLine="true"
             android:textColor="@color/grayDark"
-            android:text="Node ID"
+            android:text="Device"
             android:textSize="11sp"
             android:textStyle="bold"/>
 

@@ -3,9 +3,7 @@ package com.edityomurti.openflowmanagerapp.ui.flowlist
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import com.edityomurti.openflowmanagerapp.R
 import com.edityomurti.openflowmanagerapp.models.flowtable.FlowTableData
 import com.edityomurti.openflowmanagerapp.models.flowtable.flow.Flow
@@ -49,6 +47,16 @@ class FlowListFragment : Fragment() {
         getTopology()
 
         return mView
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater?.inflate(R.menu.menu_flow_list, menu)
     }
 
     fun setupRV(){

@@ -25,6 +25,8 @@ class FlowListAdapter(private var dataList: MutableList<Flow>): RecyclerView.Ada
         holder.itemView.tv_id_flow.text = dataList[position].id.toString()
         holder.itemView.tv_id_table.text = "table:" + dataList[position].tableId.toString()
         holder.itemView.tv_priority.text = dataList[position].priority.toString()
+
+        holder.itemView.card_flow_item.setOnClickListener {  }
     }
 
     inner class FlowListViewHolder(view: View): RecyclerView.ViewHolder(view)
