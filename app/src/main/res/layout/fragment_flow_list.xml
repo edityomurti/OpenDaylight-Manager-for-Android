@@ -4,14 +4,72 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.flowlist.FlowListFragment">
+    tools:context=".ui.flowlist.FlowListFragment"
+    android:background="@color/grayLight">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="FLOW TABLE"
-        android:textSize="20sp"
-        android:textStyle="bold"/>
+        android:paddingTop="10dp"
+        android:paddingBottom="6dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_id_node"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:ellipsize="middle"
+            android:singleLine="true"
+            android:textColor="@color/grayDark"
+            android:text="Node ID"
+            android:textSize="11sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_id_flow"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:ellipsize="middle"
+            android:singleLine="true"
+            android:textColor="@color/grayDark"
+            android:text="Flow ID"
+            android:textSize="11sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_id_table"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:ellipsize="middle"
+            android:singleLine="true"
+            android:textColor="@color/grayDark"
+            android:text="Table ID"
+            android:textSize="11sp"
+            android:textStyle="bold"/>
+
+
+        <TextView
+            android:id="@+id/tv_priority"
+            android:layout_width="0dp"
+            android:layout_weight="0.8"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:ellipsize="middle"
+            android:singleLine="true"
+            android:textColor="@color/grayDark"
+            android:text="Priority"
+            android:textSize="11sp"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_list_flow"

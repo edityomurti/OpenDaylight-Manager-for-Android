@@ -3,6 +3,7 @@ package com.edityomurti.openflowmanagerapp.models.flowtable.flow
 import com.google.gson.annotations.SerializedName
 
 data class Flow(
+        var nodeId: String?,
         @SerializedName("id")
         var id: String?,
         @SerializedName("instruction")
@@ -11,7 +12,7 @@ data class Flow(
         var flags: String?,
         @SerializedName("match")
         var match: Match?,
-        @SerializedName("prority")
+        @SerializedName("priority")
         var priority: Int?,
         @SerializedName("table_id")
         var tableId: Int?

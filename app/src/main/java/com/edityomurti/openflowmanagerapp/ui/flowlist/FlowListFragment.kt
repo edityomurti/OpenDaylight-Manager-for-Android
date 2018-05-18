@@ -13,7 +13,6 @@ import com.edityomurti.openflowmanagerapp.models.topology.Node
 import com.edityomurti.openflowmanagerapp.models.topology.Nodes
 import com.edityomurti.openflowmanagerapp.utils.RestAdapter
 import kotlinx.android.synthetic.main.fragment_flow_list.view.*
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -37,6 +36,9 @@ class FlowListFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_flow_list, container, false)
+
+
+        activity?.title = "Flows"
 
         flowListAdapter = FlowListAdapter(dataList)
         layoutManager = LinearLayoutManager(context)
@@ -87,10 +89,15 @@ class FlowListFragment : Fragment() {
             override fun onResponse(call: Call<FlowTableData>?, response: Response<FlowTableData>?) {
                 if(response?.isSuccessful!!){
                     if(response.body()?.table?.size != 0){
-                        if (response.body()?.table?.get(0) != null ||response.body()?.table?.get(0)?.flowData?.size != 0){
-//                            flowListAdapter.addData(response.body()?.table?.get(0)?.flowData!!)
-                            dataList.addAll(response.body()?.table?.get(0)?.flowData!!)
-                            flowListAdapter.notifyDataSetChanged()
+                        if (response.body()?.table?.get(0) != null || response.body()?.table?.get(0)?.flowData?.size != 0){
+                            var flowDataList = response.body()?.table?.get(0)?.flowData
+                            for (i in flowDataList?.indices!!){
+                                flowDataList[i].nodeId = nodeId
+                            }
+
+                            flowListAdapter.addData(flowDataList)
+//                            dataList.addAll(flowDataList)
+//                            flowListAdapter.notifyDataSetChanged()
                             println("getFlows, response.body()?.table?.get(0) != null ||response.body()?.table?.get(0)?.flowData?.size != 0")
                         } else {
                             println("getFlows, response.body()?.table?.get(0) == null ||response.body()?.table?.get(0)?.flowData?.size == 0")

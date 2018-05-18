@@ -1,34 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/grayLight">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tv_id_flow"
-            android:layout_width="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:elevation="0dp"
+        app:cardElevation="0dp"
+        app:cardCornerRadius="6dp"
+        android:background="@color/white">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="FLOW ID"
-            android:textStyle="bold"
-            android:textSize="16sp"/>
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/tv_id_table"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TABLE ID"/>
+            <TextView
+                android:id="@+id/tv_id_node"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:text="openflow:1"
+                android:textSize="12sp"/>
 
-        <TextView
-            android:id="@+id/tv_priority"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="PRIORITY"
-            android:textColor="@color/colorPrimary"/>
+            <TextView
+                android:id="@+id/tv_id_flow"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="#UF$TABLE*0-619"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimaryDark"/>
 
-    </LinearLayout>
-</RelativeLayout>
+            <TextView
+                android:id="@+id/tv_id_table"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:textColor="@color/colorPrimary"
+                android:textSize="12sp"
+                android:text="table:0"/>
+
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_weight="0.8"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|end">
+
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/ic_star_red_24dp"
+                    android:layout_gravity="center_vertical"/>
+                <TextView
+                    android:id="@+id/tv_priority"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="middle"
+                    android:singleLine="true"
+                    android:text="1000"
+                    android:textSize="12sp"
+                    android:textColor="@color/red"/>
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
