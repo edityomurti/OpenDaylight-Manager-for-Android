@@ -34,8 +34,6 @@ class FlowListFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_flow_list, container, false)
-
-
         activity?.title = "Flows"
 
         flowListAdapter = FlowListAdapter(dataList)
@@ -44,19 +42,9 @@ class FlowListFragment : Fragment() {
         setupRV()
 
         restAdapter = RestAdapter()
-        getTopology()
+        getInventoryNodes()
 
         return mView
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater?.inflate(R.menu.menu_flow_list, menu)
     }
 
     fun setupRV(){
@@ -65,8 +53,8 @@ class FlowListFragment : Fragment() {
         mView.rv_list_flow.adapter = flowListAdapter
     }
 
-    fun getTopology(){
-        restAdapter.getEndPoint().getTopology().enqueue(object : Callback<Nodes> {
+    fun getInventoryNodes(){
+        restAdapter.getEndPoint().getInventoryNodes().enqueue(object : Callback<Nodes> {
             override fun onResponse(call: Call<Nodes>?, response: Response<Nodes>?) {
                 if(response?.isSuccessful!!){
                     if(response.body() != null || response.body()?.nodeData?.node?.size != 0){
@@ -76,7 +64,7 @@ class FlowListFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<Nodes>?, t: Throwable?) {
-                println("onFailure getTopology ${t?.message}")
+                println("onFailure getInventoryNodes ${t?.message}")
             }
         })
     }
@@ -122,5 +110,16 @@ class FlowListFragment : Fragment() {
                 println("$TAG , getFlows onFailure")
             }
         })
+    }
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater?.inflate(R.menu.menu_flow_list, menu)
     }
 }

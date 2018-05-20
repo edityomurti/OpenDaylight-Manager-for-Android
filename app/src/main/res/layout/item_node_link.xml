@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp"
+    android:layout_marginLeft="6dp">
+    <ImageView
+        android:id="@+id/iv_dot_circle"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:src="@drawable/ic_dot_circle"
+        android:layout_centerVertical="true"/>
+    <TextView
+        android:id="@+id/tv_host_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="host:00:00:00:00:00:01"
+        android:layout_toRightOf="@id/iv_dot_circle"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimaryLight"/>
+    <TextView
+        android:id="@+id/tv_via"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tv_host_name"
+        android:text=" via port "/>
+    <TextView
+        android:id="@+id/tv_port_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tv_via"
+        android:text="2"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimaryLight"/>
+</RelativeLayout>
