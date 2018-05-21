@@ -9,6 +9,7 @@ import com.edityomurti.openflowmanagerapp.R
 import com.edityomurti.openflowmanagerapp.ui.flowlist.FlowListFragment
 import com.edityomurti.openflowmanagerapp.ui.settings.SettingsFragment
 import com.edityomurti.openflowmanagerapp.ui.topology.DeviceListFragment
+import com.edityomurti.openflowmanagerapp.utils.Constants
 import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : AppCompatActivity() {
@@ -51,22 +52,49 @@ class HomeActivity : AppCompatActivity() {
     fun selectDeviceListFragment(){
         deviceListFragment = DeviceListFragment()
 
-        var fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.fragment_container, deviceListFragment).commitAllowingStateLoss()
+        if(supportFragmentManager.findFragmentByTag(Constants.TAGS_DEVICE_LIST_FRAGMENT) != null){
+            supportFragmentManager.beginTransaction().show(supportFragmentManager.findFragmentByTag(Constants.TAGS_DEVICE_LIST_FRAGMENT)).commitAllowingStateLoss()
+        } else {
+            supportFragmentManager.beginTransaction().add(R.id.fragment_container, deviceListFragment, Constants.TAGS_DEVICE_LIST_FRAGMENT).commitAllowingStateLoss()
+        }
+        if(supportFragmentManager.findFragmentByTag(Constants.TAGS_FLOW_LIST_FRAGMENT) != null){
+            supportFragmentManager.beginTransaction().hide(supportFragmentManager.findFragmentByTag(Constants.TAGS_FLOW_LIST_FRAGMENT)).commitAllowingStateLoss()
+        }
+        if(supportFragmentManager.findFragmentByTag(Constants.TAGS_SETTINGS_FRAGMENT) != null){
+            supportFragmentManager.beginTransaction().hide(supportFragmentManager.findFragmentByTag(Constants.TAGS_SETTINGS_FRAGMENT)).commitAllowingStateLoss()
+        }
     }
 
     fun selectFlowListFragment(){
         flowListFragment = FlowListFragment()
 
-        var fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.fragment_container, flowListFragment).commitAllowingStateLoss()
+        if(supportFragmentManager.findFragmentByTag(Constants.TAGS_FLOW_LIST_FRAGMENT) != null){
+            supportFragmentManager.beginTransaction().show(supportFragmentManager.findFragmentByTag(Constants.TAGS_FLOW_LIST_FRAGMENT)).commitAllowingStateLoss()
+        } else {
+            supportFragmentManager.beginTransaction().add(R.id.fragment_container, flowListFragment, Constants.TAGS_FLOW_LIST_FRAGMENT).commitAllowingStateLoss()
+        }
+        if(supportFragmentManager.findFragmentByTag(Constants.TAGS_DEVICE_LIST_FRAGMENT) != null){
+            supportFragmentManager.beginTransaction().hide(supportFragmentManager.findFragmentByTag(Constants.TAGS_DEVICE_LIST_FRAGMENT)).commitAllowingStateLoss()
+        }
+        if(supportFragmentManager.findFragmentByTag(Constants.TAGS_SETTINGS_FRAGMENT) != null){
+            supportFragmentManager.beginTransaction().hide(supportFragmentManager.findFragmentByTag(Constants.TAGS_SETTINGS_FRAGMENT)).commitAllowingStateLoss()
+        }
     }
 
     fun selectSettingsFragment(){
         settingsFragment = SettingsFragment()
 
-        var fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.fragment_container, settingsFragment).commitAllowingStateLoss()
+        if(supportFragmentManager.findFragmentByTag(Constants.TAGS_SETTINGS_FRAGMENT) != null){
+            supportFragmentManager.beginTransaction().show(supportFragmentManager.findFragmentByTag(Constants.TAGS_SETTINGS_FRAGMENT)).commitAllowingStateLoss()
+        } else {
+            supportFragmentManager.beginTransaction().add(R.id.fragment_container, settingsFragment, Constants.TAGS_SETTINGS_FRAGMENT).commitAllowingStateLoss()
+        }
+        if(supportFragmentManager.findFragmentByTag(Constants.TAGS_DEVICE_LIST_FRAGMENT) != null){
+            supportFragmentManager.beginTransaction().hide(supportFragmentManager.findFragmentByTag(Constants.TAGS_DEVICE_LIST_FRAGMENT)).commitAllowingStateLoss()
+        }
+        if(supportFragmentManager.findFragmentByTag(Constants.TAGS_FLOW_LIST_FRAGMENT) != null){
+            supportFragmentManager.beginTransaction().hide(supportFragmentManager.findFragmentByTag(Constants.TAGS_FLOW_LIST_FRAGMENT)).commitAllowingStateLoss()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

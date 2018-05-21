@@ -37,7 +37,7 @@ class FlowListFragment : Fragment() {
         mView = inflater.inflate(R.layout.fragment_flow_list, container, false)
         activity?.title = "Flows"
 
-        flowListAdapter = FlowListAdapter(dataList)
+        flowListAdapter = FlowListAdapter(context!!, dataList)
         layoutManager = LinearLayoutManager(context)
 
         setupRV()
