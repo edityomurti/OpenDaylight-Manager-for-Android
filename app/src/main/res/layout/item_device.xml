@@ -37,7 +37,6 @@
                     android:id="@+id/iv_device"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_curve_arrow"
                     android:layout_centerVertical="true"/>
 
                 <TextView

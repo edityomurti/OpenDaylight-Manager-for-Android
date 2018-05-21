@@ -7,6 +7,7 @@ import android.support.v4.view.GravityCompat
 import android.view.MenuItem
 import com.edityomurti.openflowmanagerapp.R
 import com.edityomurti.openflowmanagerapp.ui.flowlist.FlowListFragment
+import com.edityomurti.openflowmanagerapp.ui.settings.SettingsFragment
 import com.edityomurti.openflowmanagerapp.ui.topology.DeviceListFragment
 import kotlinx.android.synthetic.main.activity_home.*
 
@@ -15,6 +16,7 @@ class HomeActivity : AppCompatActivity() {
 
     lateinit var deviceListFragment: DeviceListFragment
     lateinit var flowListFragment: FlowListFragment
+    lateinit var settingsFragment: SettingsFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +39,7 @@ class HomeActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.nav_devices -> selectDeviceListFragment()
                 R.id.nav_flow -> selectFlowListFragment()
+                R.id.nav_settings -> selectSettingsFragment()
             }
 
             true
@@ -57,6 +60,13 @@ class HomeActivity : AppCompatActivity() {
 
         var fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.fragment_container, flowListFragment).commitAllowingStateLoss()
+    }
+
+    fun selectSettingsFragment(){
+        settingsFragment = SettingsFragment()
+
+        var fragmentTransaction = supportFragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.fragment_container, settingsFragment).commitAllowingStateLoss()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

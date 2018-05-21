@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
+import android.widget.Toast
 import com.edityomurti.openflowmanagerapp.R
 import com.edityomurti.openflowmanagerapp.models.flowtable.FlowTableData
 import com.edityomurti.openflowmanagerapp.models.flowtable.flow.Flow
@@ -41,7 +42,7 @@ class FlowListFragment : Fragment() {
 
         setupRV()
 
-        restAdapter = RestAdapter()
+        restAdapter = RestAdapter(context!!)
         getInventoryNodes()
 
         return mView
@@ -54,6 +55,7 @@ class FlowListFragment : Fragment() {
     }
 
     fun getInventoryNodes(){
+        showLoading(true)
         restAdapter.getEndPoint().getInventoryNodes().enqueue(object : Callback<Nodes> {
             override fun onResponse(call: Call<Nodes>?, response: Response<Nodes>?) {
                 if(response?.isSuccessful!!){
@@ -83,6 +85,7 @@ class FlowListFragment : Fragment() {
 
         restAdapter.getEndPoint().getFlows(nodeId, tableId).enqueue(object : retrofit2.Callback<FlowTableData>{
             override fun onResponse(call: Call<FlowTableData>?, response: Response<FlowTableData>?) {
+                showLoading(false)
                 if(response?.isSuccessful!!){
                     if(response.body()?.table?.size != 0){
                         if (response.body()?.table?.get(0) != null || response.body()?.table?.get(0)?.flowData?.size != 0){
@@ -107,11 +110,20 @@ class FlowListFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<FlowTableData>?, t: Throwable?) {
-                println("$TAG , getFlows onFailure")
+                showLoading(false)
+                println("$TAG , getFlows onFailure: ${t?.message}")
+//                Toast.makeText(context, "Request data failed, Please check your settings ..", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
+    fun showLoading(isLoading: Boolean){
+        if(isLoading){
+            mView.progressbar.visibility = View.VISIBLE
+        } else {
+            mView.progressbar.visibility = View.GONE
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,5 +133,12 @@ class FlowListFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater?.inflate(R.menu.menu_flow_list, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item?.itemId){
+            R.id.action_refresh -> getInventoryNodes()
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

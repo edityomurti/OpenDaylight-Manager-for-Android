@@ -2,25 +2,24 @@ package com.edityomurti.openflowmanagerapp.ui.topology
 
 import android.animation.ObjectAnimator
 import android.content.Context
+import android.provider.SyncStateContract
 import android.support.v7.widget.RecyclerView
 import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.edityomurti.openflowmanagerapp.R
+import com.edityomurti.openflowmanagerapp.models.topology.Device
 import com.edityomurti.openflowmanagerapp.models.topology.Link
 import com.edityomurti.openflowmanagerapp.models.topology.NetworkTopology
 import com.edityomurti.openflowmanagerapp.models.topology.Node
+import com.edityomurti.openflowmanagerapp.utils.Constants
 import com.github.aakira.expandablelayout.ExpandableLayoutListenerAdapter
 import com.github.aakira.expandablelayout.Utils
 import kotlinx.android.synthetic.main.item_device.view.*
 import kotlinx.android.synthetic.main.item_node_link.view.*
 
-class DeviceListAdapter(private var networkTopology: NetworkTopology?): RecyclerView.Adapter<DeviceListAdapter.DeviceListViewHolder>(){
-    var switchNodeData: MutableList<Node> = ArrayList()
-    var hostNodeData: MutableList<Node> = ArrayList()
-    var linkData: MutableList<Link> = ArrayList()
-
+class DeviceListAdapter(private var deviceData: MutableList<Device>): RecyclerView.Adapter<DeviceListAdapter.DeviceListViewHolder>(){
     var expandState: SparseBooleanArray = SparseBooleanArray()
 
     lateinit var context: Context
@@ -32,51 +31,50 @@ class DeviceListAdapter(private var networkTopology: NetworkTopology?): Recycler
     }
 
     override fun getItemCount(): Int {
-        return switchNodeData.size + hostNodeData.size
+        return deviceData.size
     }
 
     override fun onBindViewHolder(holder: DeviceListViewHolder, position: Int) {
         holder.setIsRecyclable(false)
-        if(position<switchNodeData.size){
-            var deviceName = switchNodeData[position].nodeId
-
+        if(deviceData[position]?.deviceType.equals(Constants.DEVICE_TYPE_SWITCH)){
             if (position == 0 ){
                 holder.itemView.tv_device_type.visibility = View.VISIBLE
                 holder.itemView.tv_device_type.text = "Switches"
             } else {
                 holder.itemView.tv_device_type.visibility = View.GONE
             }
-            holder.itemView.iv_device.setImageResource(R.drawable.ic_switch)
-            holder.itemView.tv_device_name.text = deviceName
-            holder.itemView.tv_device_node.text = "${switchNodeData[position].terminationPointData.size-1}  nodes"
+            holder.itemView.iv_device.setImageResource(R.drawable.ic_switch_new)
+            holder.itemView.tv_device_name.text = deviceData[position].deviceName
+            holder.itemView.tv_device_node.text = deviceData[position].deviceDesc
 
-            for(i in linkData.indices){
-                if(linkData.get(i).source?.sourceNode.equals(deviceName)){
-                    var linkView = LayoutInflater.from(context).inflate(R.layout.item_node_link, null, false)
-                    linkView.tv_host_name.text = linkData.get(i).destination?.destNode
-                    linkView.tv_port_number.text = linkData.get(i).source?.sourceTp?.substring(linkData.get(i).source?.sourceTp?.lastIndexOf(":")!!+1)
-                    holder.itemView.expandable_layout.addView(linkView)
-                }
+            var linkDevice = deviceData[position].linkDevice
+
+            for(i in linkDevice.indices){
+                var linkView = LayoutInflater.from(context).inflate(R.layout.item_node_link, null, false)
+                linkView.tv_host_name.text = linkDevice.get(i).destination?.destNode
+                println("link device i : $i ,pos : $position = ${linkDevice.get(i).destination?.destNode}")
+                linkView.tv_port_number.text = linkDevice.get(i).source?.sourceTp?.substring(linkDevice.get(i).source?.sourceTp?.lastIndexOf(":")!!+1)
+                holder.itemView.expandable_layout.addView(linkView)
             }
         } else {
-            var deviceName = hostNodeData[position-switchNodeData.size].nodeId
-            if(position-switchNodeData.size == 0){
+            if(deviceData[position-1].deviceType.equals(Constants.DEVICE_TYPE_SWITCH)){
                 holder.itemView.tv_device_type.visibility = View.VISIBLE
                 holder.itemView.tv_device_type.text = "Hosts"
             } else {
                 holder.itemView.tv_device_type.visibility = View.GONE
             }
-            holder.itemView.iv_device.setImageResource(R.drawable.ic_laptop)
-            holder.itemView.tv_device_name.text = deviceName
-            holder.itemView.tv_device_node.text = hostNodeData[position-switchNodeData.size].hostTrackerAddressesData[0].ip
-            for(i in linkData.indices){
-                if(linkData.get(i).source?.sourceNode.equals(deviceName)){
-                    var linkView = LayoutInflater.from(context).inflate(R.layout.item_node_link, null, false)
-                    linkView.tv_host_name.text = linkData.get(i).destination?.destNode
-                    linkView.tv_via.visibility = View.GONE
-                    linkView.tv_port_number.visibility = View.GONE
-                    holder.itemView.expandable_layout.addView(linkView)
-                }
+            holder.itemView.iv_device.setImageResource(R.drawable.ic_laptop_new)
+            holder.itemView.tv_device_name.text = deviceData[position].deviceName
+            holder.itemView.tv_device_node.text = deviceData[position].deviceDesc
+            var linkDevice = deviceData[position].linkDevice
+
+            for(i in linkDevice.indices){
+                var linkView = LayoutInflater.from(context).inflate(R.layout.item_node_link, null, false)
+                linkView.tv_host_name.text = linkDevice.get(i).destination?.destNode
+                linkView.tv_port_number.text = linkDevice.get(i).source?.sourceTp?.substring(linkDevice.get(i).source?.sourceTp?.lastIndexOf(":")!!+1)
+                linkView.tv_via.visibility = View.GONE
+                linkView.tv_port_number.visibility = View.GONE
+                holder.itemView.expandable_layout.addView(linkView)
             }
         }
 
@@ -118,25 +116,9 @@ class DeviceListAdapter(private var networkTopology: NetworkTopology?): Recycler
 
     inner class DeviceListViewHolder(view: View): RecyclerView.ViewHolder(view)
 
-    fun setData(data: NetworkTopology){
-        networkTopology = data
-        switchNodeData.clear()
-        hostNodeData.clear()
-        var nodesData = networkTopology?.topologyData?.topology?.get(0)?.nodeData
-        for(i in nodesData?.indices!!){
-            if(nodesData.get(i).hostTrackerId == null){
-                switchNodeData.add(nodesData[i])
-            } else {
-                hostNodeData.add(nodesData[i])
-            }
-        }
-
-        for(i in 0..(switchNodeData.size + hostNodeData.size)){
-            expandState.append(i, false)
-        }
-
-        linkData.clear()
-        linkData = networkTopology?.topologyData?.topology?.get(0)?.linkData!!
+    fun setData(data: MutableList<Device>){
+        deviceData.clear()
+        deviceData.addAll(data)
         notifyDataSetChanged()
     }
 
