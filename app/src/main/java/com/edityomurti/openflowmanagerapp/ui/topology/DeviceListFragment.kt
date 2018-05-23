@@ -1,11 +1,12 @@
 package com.edityomurti.openflowmanagerapp.ui.topology
 
 
+import android.app.Activity
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
-import android.widget.Toast
 
 import com.edityomurti.openflowmanagerapp.R
 import com.edityomurti.openflowmanagerapp.models.topology.Device
@@ -29,18 +30,19 @@ class DeviceListFragment : Fragment() {
     lateinit var deviceListAdapter: DeviceListAdapter
     lateinit var layoutManager: LinearLayoutManager
     var deviceDataList: MutableList<Device> = ArrayList()
+    lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_device_list, container, false)
         activity?.title = "Devices"
 
+        sharedPreferences = activity?.getSharedPreferences(Constants.DEFAULT_PREFS_NAME, Activity.MODE_PRIVATE)!!
         deviceListAdapter = DeviceListAdapter(deviceDataList)
         layoutManager = LinearLayoutManager(context)
 
         setupRV()
 
-        restAdapter = RestAdapter(context!!)
         getNetworkTopology()
 
         return mView
@@ -53,11 +55,16 @@ class DeviceListFragment : Fragment() {
     }
 
     fun getNetworkTopology(){
+        restAdapter = RestAdapter(context!!)
         showLoading(true)
+        showRV(false)
+        showNoConnection(false)
         restAdapter.getEndPoint().getNetworkTopology().enqueue(object : Callback<NetworkTopology>{
             override fun onResponse(call: Call<NetworkTopology>?, response: Response<NetworkTopology>?) {
                 showLoading(false)
                 if(response?.isSuccessful!!){
+                    showNoConnection(false)
+                    showRV(true)
                     var deviceData: MutableList<Device> = ArrayList()
                     var nodesData = response.body()?.topologyData?.topology?.get(0)?.nodeData
                     var linkData = response.body()?.topologyData?.topology?.get(0)?.linkData
@@ -85,13 +92,17 @@ class DeviceListFragment : Fragment() {
                     deviceData.sortWith(compareBy({it.deviceType}, {it.deviceName}))
                     deviceData.reverse()
                     deviceListAdapter.setData(deviceData)
+                } else {
+                    showNoConnection(true)
+                    showRV(false)
                 }
             }
 
             override fun onFailure(call: Call<NetworkTopology>?, t: Throwable?) {
                 showLoading(false)
                 println("$TAG , getNetworkTopology onFailure: ${t?.message}")
-//                Toast.makeText(context, "Request data failed, Please check your settings ..", Toast.LENGTH_SHORT).show()
+                showNoConnection(true)
+                showRV(false)
             }
         })
     }
@@ -101,6 +112,25 @@ class DeviceListFragment : Fragment() {
             mView.progressbar.visibility = View.VISIBLE
         } else {
             mView.progressbar.visibility = View.GONE
+        }
+    }
+
+    fun showNoConnection(isNoConnection: Boolean){
+        if(isNoConnection){
+            mView.ll_no_connection.visibility = View.VISIBLE
+            mView.tv_ip_controller.text =
+                    sharedPreferences.getString(Constants.CONTROLLER_IP_ADDRESS, "NO IP") +
+                    ":" + sharedPreferences.getString(Constants.CONTROLLER_PORT_ADDRESS, "NO PORT")
+        } else {
+            mView.ll_no_connection.visibility = View.GONE
+        }
+    }
+
+    fun showRV(isRVshowing: Boolean){
+        if(isRVshowing){
+            mView.rv_device_list.visibility = View.VISIBLE
+        } else {
+            mView.rv_device_list.visibility = View.GONE
         }
     }
 

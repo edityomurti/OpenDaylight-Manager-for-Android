@@ -4,6 +4,7 @@ import java.io.Serializable
 import java.math.BigInteger
 
 data class Flow(
+        var flowType: String?,
         var nodeId: String?,
         @SerializedName("id")
         var id: String?,
@@ -19,12 +20,12 @@ data class Flow(
         var match: Match?,
         @SerializedName("hard-timeout")
         var hardTimeOut: Int?,
+        @SerializedName("idle-timeout")
+        var idleTimeOut: Int?,
         @SerializedName("priority")
         var priority: Int?,
         @SerializedName("table_id")
         var tableId: Int?,
         @SerializedName("opendaylight-flow-statistics:flow-statistics")
-        var flowStatistics: FlowStatistics?,
-        @SerializedName("idle-timeout")
-        var idleTimeout: Int?
+        var flowStatistics: FlowStatistics?
 ): Serializable

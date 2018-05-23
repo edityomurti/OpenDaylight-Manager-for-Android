@@ -27,21 +27,21 @@ class RestAdapter(var context: Context) {
         USERNAME = sharedPreferences.getString(Constants.CONTROLLER_USERNAME, null)
         PASSWORD = sharedPreferences.getString(Constants.CONTROLLER_PASSWORD, null)
 
-        if(CONTROLLER_IP_ADDRESS.isNullOrEmpty()){
+        if(CONTROLLER_IP_ADDRESS == null){
             CONTROLLER_IP_ADDRESS = "192.168.56.1"
         }
 
-        if(PORT_NUMBER.isNullOrEmpty()){
-            PORT_NUMBER = "8181"
+        if(PORT_NUMBER == null){
+            PORT_NUMBER = "6633"
         }
 
         BASE_URL = "$CONTROLLER_IP_ADDRESS:$PORT_NUMBER"
 
-        if(USERNAME.isNullOrEmpty()){
+        if(USERNAME == null){
             USERNAME = "admin"
         }
 
-        if(PASSWORD.isNullOrEmpty()){
+        if(PASSWORD == null){
             PASSWORD = "admin"
         }
 

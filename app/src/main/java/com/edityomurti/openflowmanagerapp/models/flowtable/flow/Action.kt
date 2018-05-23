@@ -7,5 +7,7 @@ data class Action(
         @SerializedName("order")
         var order: Int?,
         @SerializedName("output-action")
-        var outputAction: OutputAction?
+        var outputAction: OutputAction?,
+        @SerializedName("drop-action")
+        var dropAction: Any?
 ): Serializable

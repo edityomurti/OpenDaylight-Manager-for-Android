@@ -9,7 +9,7 @@
         <item
             android:id="@+id/nav_flow"
             android:icon="@drawable/ic_curve_arrow"
-            android:title="Flow"/>
+            android:title="Flow Table"/>
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings_blue_24dp"

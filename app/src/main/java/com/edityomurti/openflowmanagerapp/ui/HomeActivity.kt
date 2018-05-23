@@ -42,7 +42,6 @@ class HomeActivity : AppCompatActivity() {
                 R.id.nav_flow -> selectFlowListFragment()
                 R.id.nav_settings -> selectSettingsFragment()
             }
-
             true
         }
 
@@ -50,6 +49,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     fun selectDeviceListFragment(){
+        title = "Devices"
         deviceListFragment = DeviceListFragment()
 
         if(supportFragmentManager.findFragmentByTag(Constants.TAGS_DEVICE_LIST_FRAGMENT) != null){
@@ -66,6 +66,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     fun selectFlowListFragment(){
+        title = "Flow Table"
         flowListFragment = FlowListFragment()
 
         if(supportFragmentManager.findFragmentByTag(Constants.TAGS_FLOW_LIST_FRAGMENT) != null){
@@ -82,6 +83,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     fun selectSettingsFragment(){
+        title = "Settings"
         settingsFragment = SettingsFragment()
 
         if(supportFragmentManager.findFragmentByTag(Constants.TAGS_SETTINGS_FRAGMENT) != null){

@@ -27,7 +27,7 @@ class FlowListAdapter(private var context: Context, private var dataList: Mutabl
     override fun onBindViewHolder(holder: FlowListViewHolder, position: Int) {
         holder.itemView.tv_id_node.text = dataList[position].nodeId.toString()
         holder.itemView.tv_id_flow.text = dataList[position].id.toString()
-        holder.itemView.tv_id_table.text = "table:" + dataList[position].tableId.toString()
+        holder.itemView.tv_flow_type.text = dataList[position].flowType
         holder.itemView.tv_priority.text = dataList[position].priority.toString()
 
         holder.itemView.card_flow_item.setOnClickListener { openDetailsFlow(dataList[position]) }
@@ -58,5 +58,9 @@ class FlowListAdapter(private var context: Context, private var dataList: Mutabl
         this.dataList.sortWith(compareBy({it.nodeId}, {it.priority}))
         this.dataList.reverse()
         notifyDataSetChanged()
+    }
+
+    fun clearData(){
+        this.dataList.clear()
     }
 }

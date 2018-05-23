@@ -94,12 +94,21 @@ class SettingsFragment : Fragment() {
         username = et_username.text.toString()
         password = et_password.text.toString()
 
-        sharedPreferences.edit()
-                .putString(Constants.CONTROLLER_IP_ADDRESS, ipAddress)
-                .putString(Constants.CONTROLLER_PORT_ADDRESS, portAddress)
-                .putString(Constants.CONTROLLER_USERNAME, username)
-                .putString(Constants.CONTROLLER_PASSWORD, password)
-                .apply()
+        if(!ipAddress.isNullOrEmpty()){
+            sharedPreferences.edit().putString(Constants.CONTROLLER_IP_ADDRESS, ipAddress).apply()
+        }
+
+        if(!portAddress.isNullOrEmpty()){
+            sharedPreferences.edit().putString(Constants.CONTROLLER_PORT_ADDRESS, portAddress).apply()
+        }
+
+        if(!username.isNullOrEmpty()){
+            sharedPreferences.edit().putString(Constants.CONTROLLER_USERNAME, username).apply()
+        }
+
+        if(!password.isNullOrEmpty()){
+            sharedPreferences.edit().putString(Constants.CONTROLLER_PASSWORD, password).apply()
+        }
 
         getData()
         Toast.makeText(context, "Settings Saved!", Toast.LENGTH_SHORT).show()

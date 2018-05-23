@@ -12,8 +12,12 @@ interface Services {
     fun getInventoryNodes(): Call<Nodes>
 
     @GET("operational/opendaylight-inventory:nodes/node/{id}/table/{table_id}")
-    fun getFlows(@Path("id") nodeId: String,
+    fun getFlowsOperational(@Path("id") nodeId: String,
                  @Path("table_id") tableId: String): Call<FlowTableData>
+
+    @GET("config/opendaylight-inventory:nodes/node/{id}/table/{table_id}")
+    fun getFlowsConfig(@Path("id") nodeId: String,
+                            @Path("table_id") tableId: String): Call<FlowTableData>
 
     @GET("operational/network-topology:network-topology")
     fun getNetworkTopology(): Call<NetworkTopology>

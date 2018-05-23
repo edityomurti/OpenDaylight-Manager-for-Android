@@ -1,15 +1,17 @@
 package com.edityomurti.openflowmanagerapp.ui.flowlist
 
+import android.app.Activity
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
-import android.widget.Toast
 import com.edityomurti.openflowmanagerapp.R
 import com.edityomurti.openflowmanagerapp.models.flowtable.FlowTableData
 import com.edityomurti.openflowmanagerapp.models.flowtable.flow.Flow
 import com.edityomurti.openflowmanagerapp.models.topology.Node
 import com.edityomurti.openflowmanagerapp.models.topology.Nodes
+import com.edityomurti.openflowmanagerapp.utils.Constants
 import com.edityomurti.openflowmanagerapp.utils.RestAdapter
 import kotlinx.android.synthetic.main.fragment_flow_list.view.*
 import retrofit2.Call
@@ -32,17 +34,19 @@ class FlowListFragment : Fragment() {
 
     private var dataList: MutableList<Flow> = ArrayList()
 
+    lateinit var sharedPreferences: SharedPreferences
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_flow_list, container, false)
-        activity?.title = "Flows"
+        activity?.title = "Flow Table"
 
+        sharedPreferences = activity?.getSharedPreferences(Constants.DEFAULT_PREFS_NAME, Activity.MODE_PRIVATE)!!
         flowListAdapter = FlowListAdapter(context!!, dataList)
         layoutManager = LinearLayoutManager(context)
 
         setupRV()
 
-        restAdapter = RestAdapter(context!!)
         getInventoryNodes()
 
         return mView
@@ -55,18 +59,30 @@ class FlowListFragment : Fragment() {
     }
 
     fun getInventoryNodes(){
+        restAdapter = RestAdapter(context!!)
         showLoading(true)
+        showRV(false)
+        showNoConnection(false)
+        flowListAdapter.clearData()
         restAdapter.getEndPoint().getInventoryNodes().enqueue(object : Callback<Nodes> {
             override fun onResponse(call: Call<Nodes>?, response: Response<Nodes>?) {
                 if(response?.isSuccessful!!){
                     if(response.body() != null || response.body()?.nodeData?.node?.size != 0){
                         getFlowsId(response.body()?.nodeData?.node!!)
                     }
+                    showNoConnection(false)
+                } else {
+                    showLoading(false)
+                    showNoConnection(true)
+                    showRV(false)
                 }
             }
 
             override fun onFailure(call: Call<Nodes>?, t: Throwable?) {
                 println("onFailure getInventoryNodes ${t?.message}")
+                showLoading(false)
+                showNoConnection(true)
+                showRV(false)
             }
         })
     }
@@ -83,7 +99,7 @@ class FlowListFragment : Fragment() {
     fun getFlows(nodeId: String){
         val tableId = "0"
 
-        restAdapter.getEndPoint().getFlows(nodeId, tableId).enqueue(object : retrofit2.Callback<FlowTableData>{
+        restAdapter.getEndPoint().getFlowsOperational(nodeId, tableId).enqueue(object : retrofit2.Callback<FlowTableData>{
             override fun onResponse(call: Call<FlowTableData>?, response: Response<FlowTableData>?) {
                 showLoading(false)
                 if(response?.isSuccessful!!){
@@ -91,12 +107,11 @@ class FlowListFragment : Fragment() {
                         if (response.body()?.table?.get(0) != null || response.body()?.table?.get(0)?.flowData?.size != 0){
                             var flowDataList = response.body()?.table?.get(0)?.flowData
                             for (i in flowDataList?.indices!!){
+                                flowDataList[i].flowType = "operational"
                                 flowDataList[i].nodeId = nodeId
                             }
 
                             flowListAdapter.addData(flowDataList)
-//                            dataList.addAll(flowDataList)
-//                            flowListAdapter.notifyDataSetChanged()
                             println("getFlows, response.body()?.table?.get(0) != null ||response.body()?.table?.get(0)?.flowData?.size != 0")
                         } else {
                             println("getFlows, response.body()?.table?.get(0) == null ||response.body()?.table?.get(0)?.flowData?.size == 0")
@@ -104,15 +119,52 @@ class FlowListFragment : Fragment() {
                     } else {
                         println("getFlows, response.body()?.table?.size -= 0")
                     }
+                    showRV(true)
+                    showNoConnection(false)
                 } else {
                     println("$TAG , getFlows isNOTSuccessful")
+                    showRV(false)
+                    showNoConnection(true)
                 }
             }
 
             override fun onFailure(call: Call<FlowTableData>?, t: Throwable?) {
                 showLoading(false)
                 println("$TAG , getFlows onFailure: ${t?.message}")
-//                Toast.makeText(context, "Request data failed, Please check your settings ..", Toast.LENGTH_SHORT).show()
+                showNoConnection(true)
+            }
+        })
+
+        restAdapter.getEndPoint().getFlowsConfig(nodeId, tableId).enqueue(object : retrofit2.Callback<FlowTableData>{
+            override fun onResponse(call: Call<FlowTableData>?, response: Response<FlowTableData>?) {
+                println("$TAG , getflowsconfig onResponse nodeId : $nodeId")
+                if(response?.isSuccessful!!){
+                    if(response.body()?.table?.size != 0){
+                        if (response.body()?.table?.get(0) != null || response.body()?.table?.get(0)?.flowData?.size != 0){
+                            var flowDataList = response.body()?.table?.get(0)?.flowData
+                            for (i in flowDataList?.indices!!){
+                                flowDataList[i].flowType = "config"
+                                flowDataList[i].nodeId = nodeId
+                            }
+
+                            flowListAdapter.addData(flowDataList)
+                            println("getflowsconfig, ADDING  FLOW")
+                        } else {
+                            println("getflowsconfig, NO DATA NULL FLOW")
+                        }
+                    } else {
+                        println("getflowsconfig, NO DATA NULL DATA")
+                    }
+                } else {
+                    println("$TAG , getflowsconfig isNOTSuccessful")
+                    println("$TAG , getflowsconfig nodeId : $nodeId")
+                    println("$TAG , getflowsconfig  response code ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<FlowTableData>?, t: Throwable?) {
+                println("$TAG , getflowsconfig onFailure nodeId : $nodeId ")
+                println("$TAG , getflowsconfig onFailure message : ${t?.message} ")
             }
         })
     }
@@ -122,6 +174,23 @@ class FlowListFragment : Fragment() {
             mView.progressbar.visibility = View.VISIBLE
         } else {
             mView.progressbar.visibility = View.GONE
+        }
+    }
+    fun showNoConnection(isNoConnection: Boolean){
+        if(isNoConnection){
+            mView.ll_no_connection.visibility = View.VISIBLE
+            mView.tv_ip_controller.text =
+                    sharedPreferences.getString(Constants.CONTROLLER_IP_ADDRESS, "NO IP") +
+                    ":" + sharedPreferences.getString(Constants.CONTROLLER_PORT_ADDRESS, "NO PORT")
+        } else {
+            mView.ll_no_connection.visibility = View.GONE
+        }
+    }
+    fun showRV(isRVshowing: Boolean){
+        if(isRVshowing){
+            mView.rv_list_flow.visibility = View.VISIBLE
+        } else {
+            mView.rv_list_flow.visibility = View.GONE
         }
     }
 

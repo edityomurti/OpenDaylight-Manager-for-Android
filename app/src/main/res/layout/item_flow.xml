@@ -53,25 +53,12 @@
                 android:textStyle="bold"
                 android:textColor="@color/colorPrimaryDark"/>
 
-            <TextView
-                android:id="@+id/tv_id_table"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:ellipsize="middle"
-                android:singleLine="true"
-                android:textColor="@color/colorPrimary"
-                android:textSize="12sp"
-                android:text="table:0"/>
-
-
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="0dp"
                 android:layout_weight="0.8"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical|end">
+                android:gravity="center">
 
                 <ImageView
                     android:layout_width="12dp"
@@ -88,7 +75,18 @@
                     android:textSize="12sp"
                     android:textColor="@color/red"/>
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_flow_type"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:textColor="@color/colorPrimary"
+                android:textSize="12sp"
+                android:text="operational"/>
         </LinearLayout>
     </android.support.v7.widget.CardView>
-
 </LinearLayout>
