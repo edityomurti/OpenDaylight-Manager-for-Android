@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:orientation="horizontal">
     <LinearLayout
         android:layout_width="0dp"
         android:layout_weight="1"
@@ -13,13 +12,26 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="In port"
+            android:text="Output Port 2"
             android:textColor="@color/colorPrimaryLight"/>
         <Spinner
-            android:id="@+id/spinner_in_port"
+            android:id="@+id/spinner_output_port_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"></Spinner>
     </LinearLayout>
+    <com.rengwuxian.materialedittext.MaterialEditText xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/et_mac_dest"
+        android:layout_width="0dp"
+        android:layout_weight="0.6"
+        android:layout_height="wrap_content"
+        android:hint="Max Length"
+        android:inputType="number"
+        app:met_floatingLabel="highlight"
+        app:met_baseColor="@color/colorPrimaryDark"
+        app:met_primaryColor="@color/colorPrimary"
+        app:met_errorColor="@color/red"
+        app:met_singleLineEllipsis="true" />
     <ImageView
         android:id="@+id/iv_delete"
         android:padding="10dp"

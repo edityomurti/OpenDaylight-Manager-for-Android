@@ -36,7 +36,6 @@ class AddFlowGeneralFragment : Fragment() {
         }
 
         alertDialog.setAdapter(arrayAdapter) { dialog, which ->
-            println("onClick which : $which")
             val view = inflater.inflate(propData[which].layoutView, null, false)
             val btnDelete = view.findViewById<ImageView>(R.id.iv_delete)
             val prop = propData[which]

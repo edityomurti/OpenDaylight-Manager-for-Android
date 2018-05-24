@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.flow_add.AddFlowMatchFragment"
+    tools:context=".ui.flow_add.AddFlowActionFragment"
     android:padding="10dp">
 
     <ScrollView
@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <LinearLayout
-                android:id="@+id/ll_match"
+                android:id="@+id/ll_action"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -56,13 +56,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Match"
+                    android:text="Action"
                     android:textStyle="bold"
                     android:textSize="16sp"/>
 
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/btn_add_match"
+                android:id="@+id/btn_add_action"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -82,12 +82,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:foreground="?android:attr/selectableItemBackground"
-                    android:text="ADD MATCH (OPTIONAL)"
+                    android:text="ADD ACTION (OPTIONAL)"
                     android:textStyle="bold"
                     android:textColor="@color/white"/>
             </LinearLayout>
 
-            </LinearLayout>
+        </LinearLayout>
     </ScrollView>
 
 </FrameLayout>

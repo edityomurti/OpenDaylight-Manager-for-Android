@@ -18,6 +18,8 @@ class AddFlowActivity : AppCompatActivity() {
 
     lateinit var selectDeviceFragment: AddFlowSelectDeviceFragment
     lateinit var generalPropertiesFragment: AddFlowGeneralFragment
+    lateinit var matchFragment: AddFlowMatchFragment
+    lateinit var actionFragment: AddFlowActionFragment
 
     lateinit var nodeList: ArrayList<String>
 
@@ -32,8 +34,11 @@ class AddFlowActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         nodeList = intent.getStringArrayListExtra(Constants.NODE_LIST)
+
         selectDeviceFragment = AddFlowSelectDeviceFragment.newInstance(nodeList)
         generalPropertiesFragment = AddFlowGeneralFragment()
+        matchFragment = AddFlowMatchFragment()
+        actionFragment = AddFlowActionFragment()
 
         setNavigation()
 
@@ -55,17 +60,25 @@ class AddFlowActivity : AppCompatActivity() {
                 btn_previous.visibility = View.INVISIBLE
                 tv_next.visibility = View.VISIBLE
                 showSelectDevice()
+                title = "Add Flow: Select Device"
             }
             2 -> {
                 btn_previous.visibility = View.VISIBLE
                 btn_next.visibility = View.VISIBLE
                 tv_next.text = "Next"
                 showGeneralProp()
+                title = "Add Flow: General Properties"
+            }
+            3 -> {
+                showMatch()
+                title = "Add Flow: Match"
             }
             MAX_POSITION -> {
                 btn_previous.visibility = View.VISIBLE
                 btn_next.visibility = View.VISIBLE
                 tv_next.text = "Finish"
+                showAction()
+                title = "Add Flow: Action"
             }
             else -> {
                 btn_previous.visibility = View.VISIBLE
@@ -78,9 +91,11 @@ class AddFlowActivity : AppCompatActivity() {
     fun showSelectDevice(){
         var transaction = supportFragmentManager.beginTransaction()
 //        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right)
-
         if(supportFragmentManager.findFragmentByTag(TAG_GENERAL_PROPERTIES_FRAGMENT) != null){
             transaction.hide(supportFragmentManager.findFragmentByTag(TAG_GENERAL_PROPERTIES_FRAGMENT))
+        }
+        if(supportFragmentManager.findFragmentByTag(TAG_MATCH_FRAGMENT) != null){
+            transaction.hide(supportFragmentManager.findFragmentByTag(TAG_MATCH_FRAGMENT))
         }
 
         if(supportFragmentManager.findFragmentByTag(TAG_SELECT_DEVICE_FRAGMENT) != null){
@@ -97,10 +112,47 @@ class AddFlowActivity : AppCompatActivity() {
         if(supportFragmentManager.findFragmentByTag(TAG_SELECT_DEVICE_FRAGMENT) != null){
             transaction.hide(supportFragmentManager.findFragmentByTag(TAG_SELECT_DEVICE_FRAGMENT))
         }
+        if(supportFragmentManager.findFragmentByTag(TAG_MATCH_FRAGMENT) != null){
+            transaction.hide(supportFragmentManager.findFragmentByTag(TAG_MATCH_FRAGMENT))
+        }
+
         if(supportFragmentManager.findFragmentByTag(TAG_GENERAL_PROPERTIES_FRAGMENT) != null){
             transaction.show(supportFragmentManager.findFragmentByTag(TAG_GENERAL_PROPERTIES_FRAGMENT))
         }else {
             transaction.add(R.id.fragment_container, generalPropertiesFragment, TAG_GENERAL_PROPERTIES_FRAGMENT)
+        }
+        transaction.commitAllowingStateLoss()
+    }
+
+    fun showMatch(){
+        var transaction = supportFragmentManager.beginTransaction()
+        if(supportFragmentManager.findFragmentByTag(TAG_SELECT_DEVICE_FRAGMENT) != null){
+            transaction.hide(supportFragmentManager.findFragmentByTag(TAG_SELECT_DEVICE_FRAGMENT))
+        }
+        if(supportFragmentManager.findFragmentByTag(TAG_GENERAL_PROPERTIES_FRAGMENT) != null){
+            transaction.hide(supportFragmentManager.findFragmentByTag(TAG_GENERAL_PROPERTIES_FRAGMENT))
+        }
+        if(supportFragmentManager.findFragmentByTag(TAG_ACTION_FRAGMENT) != null){
+            transaction.hide(supportFragmentManager.findFragmentByTag(TAG_ACTION_FRAGMENT))
+        }
+
+        if(supportFragmentManager.findFragmentByTag(TAG_MATCH_FRAGMENT) != null){
+            transaction.show(supportFragmentManager.findFragmentByTag(TAG_MATCH_FRAGMENT))
+        } else {
+            transaction.add(R.id.fragment_container, matchFragment, TAG_MATCH_FRAGMENT)
+        }
+        transaction.commitAllowingStateLoss()
+    }
+
+    fun showAction(){
+        var transaction = supportFragmentManager.beginTransaction()
+        if(supportFragmentManager.findFragmentByTag(TAG_MATCH_FRAGMENT) != null){
+            transaction.hide(supportFragmentManager.findFragmentByTag(TAG_MATCH_FRAGMENT))
+        }
+        if(supportFragmentManager.findFragmentByTag(TAG_ACTION_FRAGMENT) != null){
+            transaction.show(supportFragmentManager.findFragmentByTag(TAG_ACTION_FRAGMENT))
+        } else {
+            transaction.add(R.id.fragment_container, actionFragment, TAG_ACTION_FRAGMENT)
         }
         transaction.commitAllowingStateLoss()
     }
