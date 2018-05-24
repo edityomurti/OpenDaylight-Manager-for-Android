@@ -11,21 +11,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.MainActivity"
-            android:screenOrientation="portrait">
-        </activity>
+        <activity
+            android:name=".ui.MainActivity"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".ui.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.flowlist.FlowDetailsActivity"
-            android:screenOrientation="portrait">
-        </activity>
+        <activity
+            android:name=".ui.flow_details.FlowDetailsActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".ui.flow_add.AddFlowActivity"></activity>
     </application>
 
 </manifest>

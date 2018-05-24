@@ -15,7 +15,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:text="host:00:00:00:00:00:01"
         android:layout_toRightOf="@id/iv_dot_circle"
         android:textStyle="bold"
         android:textColor="@color/colorPrimaryLight"/>
@@ -23,14 +22,13 @@
         android:id="@+id/tv_via"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/tv_host_name"
-        android:text=" via port "/>
+        android:text=" via port "
+        android:layout_toRightOf="@id/tv_host_name"/>
     <TextView
         android:id="@+id/tv_port_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/tv_via"
-        android:text="2"
         android:textStyle="bold"
         android:textColor="@color/colorPrimaryLight"/>
 </RelativeLayout>

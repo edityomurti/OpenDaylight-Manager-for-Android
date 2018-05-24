@@ -47,15 +47,22 @@ class DeviceListAdapter(private var deviceData: MutableList<Device>): RecyclerVi
             holder.itemView.tv_device_name.text = deviceData[position].deviceName
             holder.itemView.tv_device_node.text = deviceData[position].deviceDesc
 
-            var linkDevice = deviceData[position].linkDevice
+            if(deviceData[position].linkDevice.size != 0 && deviceData[position].linkDevice.size != null){
+                var linkDevice = deviceData[position].linkDevice
 
-            for(i in linkDevice.indices){
+                for(i in linkDevice.indices){
+                    var linkView = LayoutInflater.from(context).inflate(R.layout.item_node_link, null, false)
+                    linkView.tv_host_name.text = linkDevice.get(i).destination?.destNode
+                    println("link device i : $i ,pos : $position = ${linkDevice.get(i).destination?.destNode}")
+                    linkView.tv_port_number.text = linkDevice.get(i).source?.sourceTp?.substring(linkDevice.get(i).source?.sourceTp?.lastIndexOf(":")!!+1)
+                    holder.itemView.expandable_layout.addView(linkView)
+                }
+            } else {
                 var linkView = LayoutInflater.from(context).inflate(R.layout.item_node_link, null, false)
-                linkView.tv_host_name.text = linkDevice.get(i).destination?.destNode
-                println("link device i : $i ,pos : $position = ${linkDevice.get(i).destination?.destNode}")
-                linkView.tv_port_number.text = linkDevice.get(i).source?.sourceTp?.substring(linkDevice.get(i).source?.sourceTp?.lastIndexOf(":")!!+1)
+                linkView.tv_host_name.text = "No flows detected"
                 holder.itemView.expandable_layout.addView(linkView)
             }
+
         } else {
             if(deviceData[position-1].deviceType.equals(Constants.DEVICE_TYPE_SWITCH)){
                 holder.itemView.tv_device_type.visibility = View.VISIBLE
@@ -68,12 +75,18 @@ class DeviceListAdapter(private var deviceData: MutableList<Device>): RecyclerVi
             holder.itemView.tv_device_node.text = deviceData[position].deviceDesc
             var linkDevice = deviceData[position].linkDevice
 
-            for(i in linkDevice.indices){
+            if(deviceData[position].linkDevice.size != 0 && deviceData[position].linkDevice.size != null) {
+                for(i in linkDevice.indices){
+                    var linkView = LayoutInflater.from(context).inflate(R.layout.item_node_link, null, false)
+                    linkView.tv_host_name.text = linkDevice.get(i).destination?.destNode
+                    linkView.tv_port_number.text = linkDevice.get(i).source?.sourceTp?.substring(linkDevice.get(i).source?.sourceTp?.lastIndexOf(":")!!+1)
+                    linkView.tv_via.visibility = View.GONE
+                    linkView.tv_port_number.visibility = View.GONE
+                    holder.itemView.expandable_layout.addView(linkView)
+                }
+            } else {
                 var linkView = LayoutInflater.from(context).inflate(R.layout.item_node_link, null, false)
-                linkView.tv_host_name.text = linkDevice.get(i).destination?.destNode
-                linkView.tv_port_number.text = linkDevice.get(i).source?.sourceTp?.substring(linkDevice.get(i).source?.sourceTp?.lastIndexOf(":")!!+1)
-                linkView.tv_via.visibility = View.GONE
-                linkView.tv_port_number.visibility = View.GONE
+                linkView.tv_host_name.text = "No flows detected"
                 holder.itemView.expandable_layout.addView(linkView)
             }
         }

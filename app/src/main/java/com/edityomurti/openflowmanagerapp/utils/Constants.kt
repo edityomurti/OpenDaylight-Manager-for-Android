@@ -15,5 +15,6 @@ class Constants{
         val TAGS_SETTINGS_FRAGMENT = "TAGS_SETTINGS_FRAGMENT"
         val DATA_TYPE_CONFIG = "config"
         val DATA_TYPE_OPERATIONAL = "operational"
+        val NODE_LIST = "NODE_LIST"
     }
 }

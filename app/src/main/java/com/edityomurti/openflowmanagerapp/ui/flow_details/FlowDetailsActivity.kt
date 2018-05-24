@@ -1,4 +1,4 @@
-package com.edityomurti.openflowmanagerapp.ui.flowlist
+package com.edityomurti.openflowmanagerapp.ui.flow_details
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -28,6 +28,7 @@ class FlowDetailsActivity : AppCompatActivity() {
     }
 
     fun showData(){
+        var flowType = flow.flowType
         val table = flow.tableId
         val flowId = flow.id
         val flowName = flow.flowName
@@ -71,6 +72,12 @@ class FlowDetailsActivity : AppCompatActivity() {
             }
         } else {
             ll_actions.visibility = View.GONE
+        }
+
+        if(flowType != null){
+            tv_flow_type.text = flowType
+        } else {
+            ll_flow_type.visibility = View.GONE
         }
 
         if(table != null){

@@ -82,16 +82,18 @@ class DeviceListFragment : Fragment() {
                             "${nodesData[i].hostTrackerAddressesData[0].ip}"
                         }
                         var linkDevice: MutableList<Link> = ArrayList()
-                        for(j in linkData?.indices!!){
-                            if(linkData[j].source?.sourceNode?.equals(deviceName)!!){
-                                linkDevice.add(linkData[j])
+                        if(linkData?.size != null){
+                            for(j in linkData?.indices!!){
+                                if(linkData[j].source?.sourceNode?.equals(deviceName)!!){
+                                    linkDevice.add(linkData[j])
+                                }
                             }
                         }
                         deviceData.add(Device(deviceName, deviceDesc, deviceType, linkDevice))
+                        deviceData.sortWith(compareBy({it.deviceType}, {it.deviceName}))
+                        deviceData.reverse()
+                        deviceListAdapter.setData(deviceData)
                     }
-                    deviceData.sortWith(compareBy({it.deviceType}, {it.deviceName}))
-                    deviceData.reverse()
-                    deviceListAdapter.setData(deviceData)
                 } else {
                     showNoConnection(true)
                     showRV(false)

@@ -6,7 +6,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.view.MenuItem
 import com.edityomurti.openflowmanagerapp.R
-import com.edityomurti.openflowmanagerapp.ui.flowlist.FlowListFragment
+import com.edityomurti.openflowmanagerapp.ui.flow_list.FlowListFragment
 import com.edityomurti.openflowmanagerapp.ui.settings.SettingsFragment
 import com.edityomurti.openflowmanagerapp.ui.topology.DeviceListFragment
 import com.edityomurti.openflowmanagerapp.utils.Constants

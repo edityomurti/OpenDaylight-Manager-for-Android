@@ -1,4 +1,4 @@
-package com.edityomurti.openflowmanagerapp.ui.flowlist
+package com.edityomurti.openflowmanagerapp.ui.flow_list
 
 import android.content.Context
 import android.content.Intent
@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.edityomurti.openflowmanagerapp.R
 import com.edityomurti.openflowmanagerapp.models.flowtable.flow.Flow
+import com.edityomurti.openflowmanagerapp.ui.flow_details.FlowDetailsActivity
 import com.edityomurti.openflowmanagerapp.utils.Constants
 import kotlinx.android.synthetic.main.item_flow.view.*
 

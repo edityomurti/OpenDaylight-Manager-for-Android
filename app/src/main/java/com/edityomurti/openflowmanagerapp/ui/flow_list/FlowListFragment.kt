@@ -1,16 +1,19 @@
-package com.edityomurti.openflowmanagerapp.ui.flowlist
+package com.edityomurti.openflowmanagerapp.ui.flow_list
 
 import android.app.Activity
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
+import android.widget.Toast
 import com.edityomurti.openflowmanagerapp.R
 import com.edityomurti.openflowmanagerapp.models.flowtable.FlowTableData
 import com.edityomurti.openflowmanagerapp.models.flowtable.flow.Flow
 import com.edityomurti.openflowmanagerapp.models.topology.Node
 import com.edityomurti.openflowmanagerapp.models.topology.Nodes
+import com.edityomurti.openflowmanagerapp.ui.flow_add.AddFlowActivity
 import com.edityomurti.openflowmanagerapp.utils.Constants
 import com.edityomurti.openflowmanagerapp.utils.RestAdapter
 import kotlinx.android.synthetic.main.fragment_flow_list.view.*
@@ -33,6 +36,7 @@ class FlowListFragment : Fragment() {
     lateinit var layoutManager: LinearLayoutManager
 
     private var dataList: MutableList<Flow> = ArrayList()
+    private var nodeList: ArrayList<String> = ArrayList()
 
     lateinit var sharedPreferences: SharedPreferences
 
@@ -64,6 +68,7 @@ class FlowListFragment : Fragment() {
         showRV(false)
         showNoConnection(false)
         flowListAdapter.clearData()
+        nodeList.clear()
         restAdapter.getEndPoint().getInventoryNodes().enqueue(object : Callback<Nodes> {
             override fun onResponse(call: Call<Nodes>?, response: Response<Nodes>?) {
                 if(response?.isSuccessful!!){
@@ -92,6 +97,7 @@ class FlowListFragment : Fragment() {
             if(data.get(i).ipAddress != null){
                 println("getFlowsId, FOUND : ${data.get(i).id}")
                 getFlows(data.get(i).id!!)
+                nodeList.add(data.get(i).id!!)
             }
         }
     }
@@ -194,6 +200,18 @@ class FlowListFragment : Fragment() {
         }
     }
 
+    fun openAddFlowActivity(){
+        if(nodeList.size > 0){
+            val intent = Intent(context, AddFlowActivity::class.java)
+            intent.putStringArrayListExtra(Constants.NODE_LIST, nodeList)
+            startActivity(intent)
+        } else {
+            Toast.makeText(context, "No devices found!", Toast.LENGTH_SHORT).show()
+        }
+
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -207,6 +225,7 @@ class FlowListFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId){
             R.id.action_refresh -> getInventoryNodes()
+            R.id.action_add -> openAddFlowActivity()
         }
         return super.onOptionsItemSelected(item)
     }
