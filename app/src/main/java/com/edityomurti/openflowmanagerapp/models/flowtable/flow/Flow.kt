@@ -4,28 +4,28 @@ import java.io.Serializable
 import java.math.BigInteger
 
 data class Flow(
-        var flowType: String?,
-        var nodeId: String?,
+        var flowType: String? = null,
+        var nodeId: String? = null,
         @SerializedName("id")
-        var id: String?,
+        var id: String? = null,
         @SerializedName("cookie")
-        var cookie: BigInteger?,
+        var cookie: BigInteger? = null,
         @SerializedName("flow-name")
-        var flowName: String?,
+        var flowName: String? = null,
         @SerializedName("instructions")
-        var instructions: InstructionData?,
+        var instructions: InstructionData? = null,
         @SerializedName("flags")
-        var flags: String?,
+        var flags: String? = null,
         @SerializedName("match")
-        var match: Match?,
+        var match: Match? = null,
         @SerializedName("hard-timeout")
-        var hardTimeOut: Int?,
+        var hardTimeOut: Int? = null,
         @SerializedName("idle-timeout")
-        var idleTimeOut: Int?,
+        var idleTimeOut: Int? = null,
         @SerializedName("priority")
-        var priority: Int?,
+        var priority: Int? = null,
         @SerializedName("table_id")
-        var tableId: Int?,
+        var tableId: Int? = null,
         @SerializedName("opendaylight-flow-statistics:flow-statistics")
-        var flowStatistics: FlowStatistics?
+        var flowStatistics: FlowStatistics? = null
 ): Serializable

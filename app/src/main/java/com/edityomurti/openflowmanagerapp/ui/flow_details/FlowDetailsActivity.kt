@@ -28,6 +28,8 @@ class FlowDetailsActivity : AppCompatActivity() {
     }
 
     fun showData(){
+        // General Properties
+        var nodeId = flow.nodeId
         var flowType = flow.flowType
         val table = flow.tableId
         val flowId = flow.id
@@ -36,6 +38,8 @@ class FlowDetailsActivity : AppCompatActivity() {
         val hardTimeout = flow.hardTimeOut
         val idleTimeout = flow.idleTimeOut
         val cookie = flow.cookie
+
+        // Match
         val ethernetType = flow.match?.ethernetMatch?.ethernetType?.type
         val inPort = flow.match?.inPort
         var sourceMac = flow.match?.ethernetMatch?.ethernetSource?.address
@@ -43,6 +47,8 @@ class FlowDetailsActivity : AppCompatActivity() {
         var ipSource = flow.match?.ipv4source
         var ipDestination = flow.match?.ipv4destination
         var outputPortData: MutableList<OutputPort> = ArrayList()
+
+        // Action
         var controllerMaxLength: Int? = null
         var actionDrop = false
         var actionNormalMaxLength: Int? = null
@@ -73,6 +79,8 @@ class FlowDetailsActivity : AppCompatActivity() {
         } else {
             ll_actions.visibility = View.GONE
         }
+
+        tv_device.text = nodeId
 
         if(flowType != null){
             tv_flow_type.text = flowType

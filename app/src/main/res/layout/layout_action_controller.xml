@@ -6,7 +6,7 @@
     android:orientation="horizontal">
     <com.rengwuxian.materialedittext.MaterialEditText xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/et_mac_dest"
+        android:id="@+id/et_controller_max_length"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"

@@ -27,7 +27,8 @@
         <activity
             android:name=".ui.flow_details.FlowDetailsActivity"
             android:screenOrientation="portrait"></activity>
-        <activity android:name=".ui.flow_add.AddFlowActivity"></activity>
+        <activity android:name=".ui.flow_add.AddFlowActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

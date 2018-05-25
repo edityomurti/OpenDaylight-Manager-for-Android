@@ -10,10 +10,18 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Spinner
 
 import com.edityomurti.openflowmanagerapp.R
 import com.edityomurti.openflowmanagerapp.models.FlowProperties
+import com.edityomurti.openflowmanagerapp.models.flowtable.flow.*
+import com.edityomurti.openflowmanagerapp.models.topology.NodeDataSerializable
+import com.edityomurti.openflowmanagerapp.utils.Constants
 import kotlinx.android.synthetic.main.fragment_add_flow_action.view.*
+import kotlinx.android.synthetic.main.layout_action_controller.view.*
+import kotlinx.android.synthetic.main.layout_action_normal.view.*
+import kotlinx.android.synthetic.main.layout_action_output_port.view.*
+import kotlinx.android.synthetic.main.layout_action_output_port_2.view.*
 
 class AddFlowActionFragment : Fragment() {
 
@@ -22,9 +30,47 @@ class AddFlowActionFragment : Fragment() {
     var actionData: MutableList<FlowProperties> = ArrayList()
     var selectedActionData: MutableList<FlowProperties> = ArrayList()
 
+    val tag_action_drop = "action_drop"
+    val tag_action_flood = "action_flood"
+    val tag_action_flood_all = "action_flood_all"
+    val tag_action_controller = "action_controller"
+    val tag_action_normal = "action_normal"
+    val tag_action_output_port = "action_output_port"
+    val tag_action_output_port_2 = "action_output_port_2"
+
+    var nodeData: NodeDataSerializable? = null
+    var newFlow: Flow? = null
+
+    var arrayAdapterPort: ArrayAdapter<String>? = null
+
+    companion object {
+        fun newInstance(nodeData: NodeDataSerializable): AddFlowActionFragment{
+            val args = Bundle()
+            args.putSerializable(Constants.NODE_DATA, nodeData)
+
+            var fragment = AddFlowActionFragment()
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_add_flow_action, container, false)
+
+        setData()
+
+        if(arguments != null){
+            var nodeList: ArrayList<String>? = null
+
+            nodeData = arguments!!.getSerializable(Constants.NODE_DATA) as NodeDataSerializable
+            for(i in nodeData!!.nodeSerializableData.indices){
+                if(nodeData!!.nodeSerializableData.get(i).nodeId == newFlow?.nodeId){
+                    nodeList = nodeData!!.nodeSerializableData.get(i).nodeConnector
+                }
+            }
+            arrayAdapterPort = ArrayAdapter(context, R.layout.item_spinner, nodeList)
+        }
 
         setDefaultData()
 
@@ -38,6 +84,14 @@ class AddFlowActionFragment : Fragment() {
             val view = inflater.inflate(actionData[which].layoutView, null, false)
             val btnDelete = view.findViewById<ImageView>(R.id.iv_delete)
             val action = actionData[which]
+
+            if(action.propId == tag_action_output_port){
+                val spinnerPort = view.findViewById<Spinner>(R.id.spinner_output_port)
+                spinnerPort.adapter = arrayAdapterPort
+            } else if(action.propId == tag_action_output_port_2){
+                val spinnerPort = view.findViewById<Spinner>(R.id.spinner_output_port_2)
+                spinnerPort.adapter = arrayAdapterPort
+            }
 
             btnDelete.setOnClickListener {
                 (view.parent as LinearLayout).removeView(view)
@@ -54,12 +108,6 @@ class AddFlowActionFragment : Fragment() {
             arrayAdapter.remove(action.propName)
             arrayAdapter.notifyDataSetChanged()
             actionData.remove(action)
-
-            selectedActionData.add(action)
-            arrayAdapter.remove(action.propName)
-            arrayAdapter.notifyDataSetChanged()
-            actionData.remove(action)
-
             mView.ll_action.addView(view)
             dialog.dismiss()
 
@@ -77,37 +125,112 @@ class AddFlowActionFragment : Fragment() {
         return mView
     }
 
+    fun setData(){
+        (activity as AddFlowActivity).setDataStatus(false)
+        newFlow = (activity as AddFlowActivity).getFlow()
+        mView.tv_device.text = newFlow!!.nodeId
+    }
+
     fun setDefaultData(){
         actionData.clear()
         selectedActionData.clear()
 
-        var drop = FlowProperties("action_drop", "Drop",
+        var drop = FlowProperties(tag_action_drop, "Drop",
                 R.layout.layout_action_drop)
         actionData.add(drop)
 
-        var flood = FlowProperties("action_drop", "Flood",
+        var flood = FlowProperties(tag_action_flood, "Flood",
                 R.layout.layout_action_flood)
         actionData.add(flood)
 
-        var floodAll = FlowProperties("action_flood", "Flood All",
+        var floodAll = FlowProperties(tag_action_flood_all, "Flood All",
                 R.layout.layout_action_flood_all)
         actionData.add(floodAll)
 
-        var controller = FlowProperties("action_controller", "Controller",
+        var controller = FlowProperties(tag_action_controller, "Controller",
                 R.layout.layout_action_controller)
         actionData.add(controller)
 
-        var normal = FlowProperties("action_normal", "Normal",
+        var normal = FlowProperties(tag_action_normal, "Normal",
                 R.layout.layout_action_normal)
         actionData.add(normal)
 
-        var outputPort = FlowProperties("action_output_port", "Output port",
+        var outputPort = FlowProperties(tag_action_output_port, "Output port",
                 R.layout.layout_action_output_port)
         actionData.add(outputPort)
 
-        var outputPort2 = FlowProperties("action_output_port_2", "Output port 2",
+        var outputPort2 = FlowProperties(tag_action_output_port_2, "Output port 2",
                 R.layout.layout_action_output_port_2)
         actionData.add(outputPort2)
+    }
 
+    fun setFlow(): Flow {
+        println("setFlow ::::")
+        newFlow = (activity as AddFlowActivity).getFlow()
+
+        var actionData: MutableList<Action> = ArrayList()
+
+        for (i in selectedActionData.indices){
+            when(selectedActionData[i].propId){
+                tag_action_drop -> {
+                    println("setFlow :::: setDrop pos : $i")
+                    var action = Action(i, null, DropAction())
+                    actionData.add(action)
+                }
+                tag_action_flood -> {
+                    var outputAction = OutputAction(0, "FLOOD")
+                    val action = Action(i, outputAction, null)
+                    actionData.add(action)
+                }
+                tag_action_flood_all -> {
+                    var outputAction = OutputAction(0, "FLOOD_ALL")
+                    val action = Action(i, outputAction, null)
+                    actionData.add(action)
+                }
+                tag_action_controller -> {
+                    var maxLength = mView.et_controller_max_length.text.toString().toInt()
+                    var outputAction = OutputAction(maxLength, "CONTROLLER")
+                    val action = Action(i, outputAction, null)
+                    actionData.add(action)
+                }
+                tag_action_normal -> {
+                    var maxLength = mView.et_normal_max_length.text.toString().toInt()
+                    var outputAction = OutputAction(maxLength, "NORMAL")
+                    val action = Action(i, outputAction, null)
+                    actionData.add(action)
+                }
+                tag_action_output_port -> {
+                    var maxLength = mView.et_output_port_maxlength.text.toString().toInt()
+                    var node = mView.spinner_output_port.selectedItem.toString()
+                    var nodeConnector = node.substring(node.lastIndexOf(":")+1, node.length)
+                    var outputAction = OutputAction(maxLength, nodeConnector)
+                    val action = Action(i, outputAction, null)
+                    actionData.add(action)
+                }
+                tag_action_output_port_2 -> {
+                    var maxLength = mView.et_output_port_2_max_length.text.toString().toInt()
+                    var node = mView.spinner_output_port_2.selectedItem.toString()
+                    var nodeConnector = node.substring(node.lastIndexOf(":")+1, node.length)
+                    var outputAction = OutputAction(maxLength, nodeConnector)
+                    val action = Action(i, outputAction, null)
+                    actionData.add(action)
+                }
+            }
+        }
+
+        if(actionData.size != 0){
+            var applyAction = ApplyActions(actionData)
+            var instruction = Instruction(0, applyAction)
+
+            var instructionData: MutableList<Instruction> = ArrayList()
+            instructionData.add(instruction)
+
+            var instructions = InstructionData(instructionData)
+
+            newFlow?.instructions = instructions
+        }
+        (activity as AddFlowActivity).setDataStatus(true)
+
+        return newFlow!!
     }
 }

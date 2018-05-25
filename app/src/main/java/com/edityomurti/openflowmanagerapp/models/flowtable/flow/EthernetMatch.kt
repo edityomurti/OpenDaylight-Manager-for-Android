@@ -5,9 +5,9 @@ import java.io.Serializable
 
 data class EthernetMatch(
         @SerializedName("ethernet-source")
-        var ethernetSource: EthernetSource,
+        var ethernetSource: EthernetSource?,
         @SerializedName("ethernet-destination")
-        var ethernetDestination: EthernetDestination,
+        var ethernetDestination: EthernetDestination?,
         @SerializedName("ethernet-type")
         var ethernetType: EthernetType?
 ): Serializable

@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 
 import com.edityomurti.openflowmanagerapp.R
+import com.edityomurti.openflowmanagerapp.models.flowtable.flow.Flow
 import com.edityomurti.openflowmanagerapp.utils.Constants
+import kotlinx.android.synthetic.main.fragment_add_flow_select_device.*
 import kotlinx.android.synthetic.main.fragment_add_flow_select_device.view.*
 
 class AddFlowSelectDeviceFragment : Fragment() {
@@ -39,5 +41,13 @@ class AddFlowSelectDeviceFragment : Fragment() {
         }
 
         return mView
+    }
+
+    fun setFlow(): Flow{
+        var name = mView.spinner_select_device.selectedItem.toString()
+        var newFlow = (activity as AddFlowActivity).getFlow()
+        newFlow.nodeId = name
+        (activity as AddFlowActivity).setDataStatus(true)
+        return newFlow
     }
 }

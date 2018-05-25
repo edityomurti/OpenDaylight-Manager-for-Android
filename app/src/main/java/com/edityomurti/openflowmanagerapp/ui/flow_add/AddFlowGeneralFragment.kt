@@ -13,7 +13,11 @@ import android.widget.LinearLayout
 
 import com.edityomurti.openflowmanagerapp.R
 import com.edityomurti.openflowmanagerapp.models.FlowProperties
+import com.edityomurti.openflowmanagerapp.models.flowtable.flow.Flow
+import kotlinx.android.synthetic.main.fragment_add_flow_general.*
 import kotlinx.android.synthetic.main.fragment_add_flow_general.view.*
+import kotlinx.android.synthetic.main.layout_prop_hard_timeout.view.*
+import kotlinx.android.synthetic.main.layout_prop_idle_timeout.view.*
 
 class AddFlowGeneralFragment : Fragment() {
     lateinit var mView: View
@@ -21,16 +25,21 @@ class AddFlowGeneralFragment : Fragment() {
     var propData: MutableList<FlowProperties> = ArrayList()
     var selectedPropData: MutableList<FlowProperties> = ArrayList()
 
+    val tag_prop_hardtimeout = "prop_hardtimeout"
+    val tag_prop_idletimeout = "prop_idletimeout"
+    val tag_prop_cookie = "prop_cookie"
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_add_flow_general, container, false)
 
         activity?.title = "Add Flow: General Properties"
 
+        setData()
         setDefaultData()
 
-        var alertDialog = AlertDialog.Builder(context)
         var arrayAdapter = ArrayAdapter<String>(context, android.R.layout.simple_list_item_1)
+        var alertDialog = AlertDialog.Builder(context)
         for(i in propData.indices){
             arrayAdapter.add(propData[i].propName)
         }
@@ -46,7 +55,6 @@ class AddFlowGeneralFragment : Fragment() {
                 propData.add(prop)
                 arrayAdapter.add(prop.propName)
                 arrayAdapter.notifyDataSetChanged()
-                println("onDelete count : ${arrayAdapter.count}")
                 if(arrayAdapter.count == 1){
                     mView.btn_add_properties.visibility = View.VISIBLE
                 }
@@ -74,17 +82,48 @@ class AddFlowGeneralFragment : Fragment() {
         return mView
     }
 
+    fun setData(){
+        (activity as AddFlowActivity).setDataStatus(false)
+        mView.tv_device.text = (activity as AddFlowActivity).getFlow().nodeId
+    }
+
     fun setDefaultData(){
         propData.clear()
         selectedPropData.clear()
 
-        var hardTimeoutProp = FlowProperties("prop_hardtimeout", "Hard timeout", R.layout.layout_prop_hard_timeout)
+        var hardTimeoutProp = FlowProperties(tag_prop_hardtimeout, "Hard timeout", R.layout.layout_prop_hard_timeout)
         propData.add(hardTimeoutProp)
 
-        var idleTimeoutProp = FlowProperties("prop_idletimeout", "Idle timeout", R.layout.layout_prop_idle_timeout)
+        var idleTimeoutProp = FlowProperties(tag_prop_idletimeout, "Idle timeout", R.layout.layout_prop_idle_timeout)
         propData.add(idleTimeoutProp)
 
-        var cookieProp = FlowProperties("prop_cookie", "Cookie", R.layout.layout_prop_cookie)
+        var cookieProp = FlowProperties(tag_prop_cookie, "Cookie", R.layout.layout_prop_cookie)
         propData.add(cookieProp)
+    }
+
+    fun setFlow(): Flow {
+        val newFlow = (activity as AddFlowActivity).getFlow()
+
+        newFlow.tableId = 0
+        newFlow.id = et_id_flow.text.toString()
+        newFlow.priority = et_priority.text.toString().toInt()
+
+        for(i in selectedPropData.indices){
+            when(selectedPropData[i].propId){
+                tag_prop_hardtimeout -> {
+                    newFlow.hardTimeOut = mView.et_hard_timeout.text.toString().toInt()
+                }
+                tag_prop_idletimeout -> {
+                    newFlow.idleTimeOut = mView.et_idle_timeout.text.toString().toInt()
+                }
+                tag_prop_cookie -> {
+                    newFlow.cookie = mView.et_hard_timeout.text.toString().toBigInteger()
+                }
+            }
+        }
+
+        (activity as AddFlowActivity).setDataStatus(true)
+
+        return newFlow
     }
 }

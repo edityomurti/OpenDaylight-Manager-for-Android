@@ -11,7 +11,7 @@
         android:layout_weight="1"
         android:layout_height="wrap_content"
         android:hint="Ethernet type"
-        android:inputType="numberDecimal"
+        android:inputType="number"
         app:met_floatingLabel="highlight"
         app:met_baseColor="@color/colorPrimaryDark"
         app:met_primaryColor="@color/colorPrimary"

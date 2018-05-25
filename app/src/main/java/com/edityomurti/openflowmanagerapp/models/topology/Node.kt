@@ -1,6 +1,7 @@
 package com.edityomurti.openflowmanagerapp.models.topology
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class Node(
         @SerializedName("node-id")
@@ -25,7 +26,7 @@ data class Node(
 data class TerminationPoint(
         @SerializedName("tp-id")
         var tpId: String?
-)
+): Serializable
 
 data class HostTrackerAttachmentPoint(
         @SerializedName("tp-id")

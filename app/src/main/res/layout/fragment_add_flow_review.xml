@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.flow_add.AddFlowReviewFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/tv_json"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/hello_blank_fragment" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:orientation="vertical">
+        
+        <com.yuyh.jsonviewer.library.JsonRecyclerView
+            android:id="@+id/rv_json"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </com.yuyh.jsonviewer.library.JsonRecyclerView>
+
+    </HorizontalScrollView>
+
+</FrameLayout>

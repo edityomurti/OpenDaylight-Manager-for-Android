@@ -9,5 +9,7 @@ data class Action(
         @SerializedName("output-action")
         var outputAction: OutputAction?,
         @SerializedName("drop-action")
-        var dropAction: Any?
+        var dropAction: DropAction?
 ): Serializable
+
+class DropAction
