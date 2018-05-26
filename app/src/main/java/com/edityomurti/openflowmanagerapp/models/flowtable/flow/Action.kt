@@ -12,4 +12,4 @@ data class Action(
         var dropAction: DropAction?
 ): Serializable
 
-class DropAction
+class DropAction: Serializable

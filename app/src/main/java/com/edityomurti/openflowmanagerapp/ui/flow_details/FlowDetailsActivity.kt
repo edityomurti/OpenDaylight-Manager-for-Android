@@ -1,25 +1,37 @@
 package com.edityomurti.openflowmanagerapp.ui.flow_details
 
+import android.app.ProgressDialog
+import android.content.DialogInterface
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import com.edityomurti.openflowmanagerapp.R
 import com.edityomurti.openflowmanagerapp.models.flowtable.flow.Action
 import com.edityomurti.openflowmanagerapp.models.flowtable.flow.Flow
 import com.edityomurti.openflowmanagerapp.utils.Constants
+import com.edityomurti.openflowmanagerapp.utils.RestAdapter
 import kotlinx.android.synthetic.main.activity_flow_details.*
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Response
 
 class FlowDetailsActivity : AppCompatActivity() {
 
     lateinit var flow: Flow
     lateinit var bundle: Bundle
+    lateinit var restAdapter: RestAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_flow_details)
         title = "Flow Details"
         bundle = intent.extras
+
+        restAdapter = RestAdapter(this)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -213,9 +225,70 @@ class FlowDetailsActivity : AppCompatActivity() {
         }
     }
 
+    fun deleteFlow(){
+        var progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Deleting ..")
+        progressDialog.setCancelable(false)
+        progressDialog.setCanceledOnTouchOutside(false)
+        progressDialog.show()
+        if(flow.flowType == Constants.DATA_TYPE_CONFIG){
+            restAdapter.getEndPoint()
+                    .deleteFlowConfig(flow.nodeId!!, flow.id!!)
+                    .enqueue(object : retrofit2.Callback<ResponseBody>{
+                        override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
+                            progressDialog.dismiss()
+                            if(response!!.isSuccessful){
+                                Toast.makeText(this@FlowDetailsActivity, "Flow deleted", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this@FlowDetailsActivity, "Delete failed", Toast.LENGTH_SHORT).show()
+                            }
+                            finish()
+                        }
+
+                        override fun onFailure(call: Call<ResponseBody>?, t: Throwable?) {
+                            progressDialog.dismiss()
+                            Toast.makeText(this@FlowDetailsActivity, "Delete failed", Toast.LENGTH_SHORT).show()
+                        }
+                    })
+        } else {
+            restAdapter.getEndPoint()
+                    .deleteFlowOperational(flow.nodeId!!, flow.id!!)
+                    .enqueue(object : retrofit2.Callback<ResponseBody>{
+                        override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
+                            progressDialog.dismiss()
+                            if(response!!.isSuccessful){
+                                Toast.makeText(this@FlowDetailsActivity, "Flow deleted", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this@FlowDetailsActivity, "Delete failed", Toast.LENGTH_SHORT).show()
+                            }
+                            finish()
+                        }
+
+                        override fun onFailure(call: Call<ResponseBody>?, t: Throwable?) {
+                            progressDialog.dismiss()
+                            Toast.makeText(this@FlowDetailsActivity, "Delete failed", Toast.LENGTH_SHORT).show()
+                        }
+                    })
+        }
+
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId){
             android.R.id.home -> onBackPressed()
+            R.id.action_delete -> {
+                var alertDialog = AlertDialog.Builder(this)
+                alertDialog.setMessage("Are you sure to delete flow ${flow.id} ?")
+                alertDialog.setPositiveButton("Yes") { dialog, which ->
+                    deleteFlow()
+                    dialog.dismiss()
+                }
+                alertDialog.setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                alertDialog.show()
+
+            }
         }
         return true
     }
@@ -224,4 +297,9 @@ class FlowDetailsActivity : AppCompatActivity() {
             var outputPort: String?,
             var outputMaxLength: Int?
     )
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater?.inflate(R.menu.menu_flow_details, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
 }

@@ -28,4 +28,12 @@ interface Services {
     fun postFlow(@Path("node_id") node_id: String,
                  @Path("flow_id") flow_id: String,
                  @Body body: FlowDataSent): Call<ResponseBody>
+
+    @DELETE("config/opendaylight-inventory:nodes/node/{node_id}/table/0/flow/{flow_id}")
+    fun deleteFlowConfig(@Path("node_id") node_id: String,
+                         @Path("flow_id") flow_id: String): Call<ResponseBody>
+
+    @DELETE("operational/opendaylight-inventory:nodes/node/{node_id}/table/0/flow/{flow_id}")
+    fun deleteFlowOperational(@Path("node_id") node_id: String,
+                         @Path("flow_id") flow_id: String): Call<ResponseBody>
 }
