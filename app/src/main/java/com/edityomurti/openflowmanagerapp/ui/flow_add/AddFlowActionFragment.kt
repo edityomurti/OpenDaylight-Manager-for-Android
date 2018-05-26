@@ -43,6 +43,10 @@ class AddFlowActionFragment : Fragment() {
 
     var arrayAdapterPort: ArrayAdapter<String>? = null
 
+    val VALUE_MAX = 65535
+    val VALUE_CANT_BE_BLANK = "Cannot be blank"
+    val VALUE_ERROR = "Value must between 0 - $VALUE_MAX"
+
     companion object {
         fun newInstance(nodeData: NodeDataSerializable): AddFlowActionFragment{
             val args = Bundle()
@@ -165,6 +169,7 @@ class AddFlowActionFragment : Fragment() {
     }
 
     fun setFlow(): Flow {
+        var isCompleted = true
         println("setFlow ::::")
         newFlow = (activity as AddFlowActivity).getFlow()
 
@@ -188,32 +193,77 @@ class AddFlowActionFragment : Fragment() {
                     actionData.add(action)
                 }
                 tag_action_controller -> {
-                    var maxLength = mView.et_controller_max_length.text.toString().toInt()
-                    var outputAction = OutputAction(maxLength, "CONTROLLER")
-                    val action = Action(i, outputAction, null)
-                    actionData.add(action)
+                    if(!mView.et_controller_max_length.text.isNullOrEmpty() || !mView.et_controller_max_length.text.isNullOrEmpty()){
+                        var maxLength = mView.et_controller_max_length.text.toString().toInt()
+                        if(maxLength in 0..VALUE_MAX){
+                            mView.et_controller_max_length.error = null
+                            var outputAction = OutputAction(maxLength, "CONTROLLER")
+                            val action = Action(i, outputAction, null)
+                            actionData.add(action)
+                        } else {
+                            mView.et_controller_max_length.error = VALUE_ERROR
+                            isCompleted = false
+                        }
+                    } else {
+                        mView.et_controller_max_length.error = VALUE_CANT_BE_BLANK
+                        isCompleted = false
+                    }
+
                 }
                 tag_action_normal -> {
-                    var maxLength = mView.et_normal_max_length.text.toString().toInt()
-                    var outputAction = OutputAction(maxLength, "NORMAL")
-                    val action = Action(i, outputAction, null)
-                    actionData.add(action)
+                    if(!mView.et_normal_max_length.text.isNullOrEmpty() || !mView.et_normal_max_length.text.isNullOrBlank()){
+                        var maxLength = mView.et_normal_max_length.text.toString().toInt()
+                        if(maxLength in 0..VALUE_MAX){
+                            mView.et_normal_max_length.error = null
+                            var outputAction = OutputAction(maxLength, "NORMAL")
+                            val action = Action(i, outputAction, null)
+                            actionData.add(action)
+                        } else {
+                            mView.et_normal_max_length.error = VALUE_ERROR
+                            isCompleted = false
+                        }
+                    } else {
+                        mView.et_normal_max_length.error = VALUE_CANT_BE_BLANK
+                        isCompleted = false
+                    }
                 }
                 tag_action_output_port -> {
-                    var maxLength = mView.et_output_port_maxlength.text.toString().toInt()
-                    var node = mView.spinner_output_port.selectedItem.toString()
-                    var nodeConnector = node.substring(node.lastIndexOf(":")+1, node.length)
-                    var outputAction = OutputAction(maxLength, nodeConnector)
-                    val action = Action(i, outputAction, null)
-                    actionData.add(action)
+                    if(!mView.et_output_port_maxlength.text.isNullOrEmpty() || !mView.et_output_port_maxlength.text.isNullOrBlank()){
+                        var maxLength = mView.et_output_port_maxlength.text.toString().toInt()
+                        if(maxLength in 0..VALUE_MAX){
+                            mView.et_output_port_maxlength.error = null
+                            var node = mView.spinner_output_port.selectedItem.toString()
+                            var nodeConnector = node.substring(node.lastIndexOf(":")+1, node.length)
+                            var outputAction = OutputAction(maxLength, nodeConnector)
+                            val action = Action(i, outputAction, null)
+                            actionData.add(action)
+                        } else {
+                            mView.et_output_port_maxlength.error = VALUE_ERROR
+                            isCompleted = false
+                        }
+                    } else {
+                        mView.et_output_port_maxlength.error = VALUE_CANT_BE_BLANK
+                        isCompleted = false
+                    }
                 }
                 tag_action_output_port_2 -> {
-                    var maxLength = mView.et_output_port_2_max_length.text.toString().toInt()
-                    var node = mView.spinner_output_port_2.selectedItem.toString()
-                    var nodeConnector = node.substring(node.lastIndexOf(":")+1, node.length)
-                    var outputAction = OutputAction(maxLength, nodeConnector)
-                    val action = Action(i, outputAction, null)
-                    actionData.add(action)
+                    if(!mView.et_output_port_2_max_length.text.isNullOrEmpty() || !mView.et_output_port_2_max_length.text.isNullOrBlank()){
+                        var maxLength = mView.et_output_port_2_max_length.text.toString().toInt()
+                        if(maxLength in 0..VALUE_MAX){
+                            mView.et_output_port_2_max_length.error = null
+                            var node = mView.spinner_output_port_2.selectedItem.toString()
+                            var nodeConnector = node.substring(node.lastIndexOf(":")+1, node.length)
+                            var outputAction = OutputAction(maxLength, nodeConnector)
+                            val action = Action(i, outputAction, null)
+                            actionData.add(action)
+                        } else {
+                            mView.et_output_port_2_max_length.error = VALUE_ERROR
+                            isCompleted = false
+                        }
+                    } else {
+                        mView.et_output_port_2_max_length.error = VALUE_CANT_BE_BLANK
+                        isCompleted = false
+                    }
                 }
             }
         }
@@ -229,7 +279,12 @@ class AddFlowActionFragment : Fragment() {
 
             newFlow?.instructions = instructions
         }
-        (activity as AddFlowActivity).setDataStatus(true)
+
+        if(isCompleted){
+            (activity as AddFlowActivity).setDataStatus(true)
+        } else {
+            (activity as AddFlowActivity).setDataStatus(false)
+        }
 
         return newFlow!!
     }

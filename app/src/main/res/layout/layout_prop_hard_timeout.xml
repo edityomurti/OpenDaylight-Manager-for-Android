@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:hint="Hard Timeout"
         android:inputType="numberDecimal"
+        android:digits="1234567890"
         app:met_floatingLabel="highlight"
         app:met_baseColor="@color/colorPrimaryDark"
         app:met_primaryColor="@color/colorPrimary"

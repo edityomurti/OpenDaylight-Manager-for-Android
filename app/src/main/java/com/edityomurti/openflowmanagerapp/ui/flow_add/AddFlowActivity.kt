@@ -1,6 +1,7 @@
 package com.edityomurti.openflowmanagerapp.ui.flow_add
 
 import android.app.ProgressDialog
+import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
@@ -19,6 +20,9 @@ import kotlinx.android.synthetic.main.activity_add_flow.*
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
+import android.content.Context.INPUT_METHOD_SERVICE
+import android.view.inputmethod.InputMethodManager
+
 
 class AddFlowActivity : AppCompatActivity() {
 
@@ -80,6 +84,11 @@ class AddFlowActivity : AppCompatActivity() {
     }
 
     fun setNavigation(){
+        val focus = this.currentFocus
+        if(focus != null){
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(focus.windowToken, 0)
+        }
         when(currentPosition){
             1 -> {
                 btn_previous.visibility = View.INVISIBLE
@@ -97,7 +106,6 @@ class AddFlowActivity : AppCompatActivity() {
                     showGeneralProp()
                 } else {
                     currentPosition -= 1
-                    Toast.makeText(this, "Something wrong", Toast.LENGTH_SHORT).show()
                 }
             }
             3 -> {
@@ -108,7 +116,6 @@ class AddFlowActivity : AppCompatActivity() {
                     tv_next.text = "Next"
                 } else {
                     currentPosition -= 1
-                    Toast.makeText(this, "Something wrong", Toast.LENGTH_SHORT).show()
                 }
             }
             4 -> {
@@ -121,7 +128,6 @@ class AddFlowActivity : AppCompatActivity() {
                     title = "Add Flow: Action"
                 } else {
                     currentPosition -= 1
-                    Toast.makeText(this, "Something wrong", Toast.LENGTH_SHORT).show()
                 }
             }
             5 -> {

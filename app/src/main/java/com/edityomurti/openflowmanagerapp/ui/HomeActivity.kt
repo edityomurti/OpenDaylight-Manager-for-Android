@@ -1,10 +1,12 @@
 package com.edityomurti.openflowmanagerapp.ui
 
+import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.view.MenuItem
+import android.view.inputmethod.InputMethodManager
 import com.edityomurti.openflowmanagerapp.R
 import com.edityomurti.openflowmanagerapp.ui.flow_list.FlowListFragment
 import com.edityomurti.openflowmanagerapp.ui.settings.SettingsFragment
@@ -36,6 +38,12 @@ class HomeActivity : AppCompatActivity() {
         nav_view.setNavigationItemSelectedListener { menuItem ->
             menuItem.isChecked = true
             drawer_layout.closeDrawers()
+
+            val focus = this.currentFocus
+            if(focus != null){
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(focus.windowToken, 0)
+            }
 
             when (menuItem.itemId) {
                 R.id.nav_devices -> selectDeviceListFragment()

@@ -11,6 +11,7 @@
         android:layout_weight="1"
         android:layout_height="wrap_content"
         android:hint="Ethernet type"
+        android:digits="0123456789"
         android:inputType="number"
         app:met_floatingLabel="highlight"
         app:met_baseColor="@color/colorPrimaryDark"

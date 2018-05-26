@@ -76,6 +76,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Priority"
                     android:inputType="numberDecimal"
+                    android:digits="0123456789"
                     app:met_floatingLabel="highlight"
                     app:met_baseColor="@color/colorPrimaryDark"
                     app:met_primaryColor="@color/colorPrimary"

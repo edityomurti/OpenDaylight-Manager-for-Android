@@ -58,6 +58,7 @@ class FlowListAdapter(private var context: Context, private var dataList: Mutabl
 
         this.dataList.sortWith(compareBy({it.nodeId}, {it.priority}))
         this.dataList.reverse()
+        this.dataList.sortWith(compareByDescending { it.flowType })
         notifyDataSetChanged()
     }
 

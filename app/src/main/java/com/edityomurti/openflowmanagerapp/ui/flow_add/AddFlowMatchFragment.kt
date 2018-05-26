@@ -4,6 +4,8 @@ package com.edityomurti.openflowmanagerapp.ui.flow_add
 import android.app.AlertDialog
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +19,7 @@ import com.edityomurti.openflowmanagerapp.models.FlowProperties
 import com.edityomurti.openflowmanagerapp.models.flowtable.flow.*
 import com.edityomurti.openflowmanagerapp.models.topology.NodeDataSerializable
 import com.edityomurti.openflowmanagerapp.utils.Constants
+import com.rengwuxian.materialedittext.MaterialEditText
 import kotlinx.android.synthetic.main.fragment_add_flow_match.view.*
 import kotlinx.android.synthetic.main.layout_match_ethernet_type.view.*
 import kotlinx.android.synthetic.main.layout_match_in_port.view.*
@@ -43,6 +46,12 @@ class AddFlowMatchFragment : Fragment() {
     var newFlow: Flow? = null
 
     var arrayAdapterInport: ArrayAdapter<String>? = null
+
+    val VALUE_MAX = 65535
+    val VALUE_CANT_BE_BLANK = "Cannot be blank"
+    val VALUE_ERROR = "Value must between 0 - $VALUE_MAX"
+    val VALUE_MAC_ADDR_ERROR = "INVALID MAC ADDRESS"
+    val VALUE_IP_ADDR_ERROR = "Should have valid IP with netmask \"/\" separated"
 
     companion object {
         fun newInstance(nodeData: NodeDataSerializable): AddFlowMatchFragment{
@@ -92,6 +101,43 @@ class AddFlowMatchFragment : Fragment() {
                 val spinnerInport = view.findViewById<Spinner>(R.id.spinner_in_port)
                 spinnerInport.adapter = arrayAdapterInport
             }
+//            else if(match.propId == tag_match_macsource){
+//                val etMatchSource = view.findViewById<MaterialEditText>(R.id.et_mac_source)
+//                etMatchSource.setAllCaps(true)
+//                etMatchSource.addTextChangedListener(object : TextWatcher{
+//                    override fun afterTextChanged(s: Editable?) {
+//                    }
+//
+//                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+//                    }
+//
+//                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//                        if(count == 2 ){
+//                            etMatchSource.setText(etMatchSource.text.toString() + ":")
+//                            etMatchSource.setSelection(etMatchSource.text.toString().length)
+//                        }
+//                    }
+//
+//                })
+//            }
+//            else if(match.propId == tag_match_macdest){
+//                val etMatchDest = view.findViewById<MaterialEditText>(R.id.et_mac_dest)
+//                etMatchDest.setAllCaps(true)
+//                etMatchDest.addTextChangedListener(object : TextWatcher{
+//                    override fun afterTextChanged(s: Editable?) {
+//                    }
+//
+//                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+//                    }
+//
+//                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//                        if(count == 2 ){
+//                            etMatchDest.setText(etMatchDest.text.toString() + ":")
+//                            etMatchDest.setSelection(etMatchDest.text.toString().length)
+//                        }
+//                    }
+//                })
+//            }
 
             btnDelete.setOnClickListener {
                 (view.parent as LinearLayout).removeView(view)
@@ -156,55 +202,182 @@ class AddFlowMatchFragment : Fragment() {
     }
 
     fun setFlow(): Flow {
+        var isCompleted = true
+
         newFlow = (activity as AddFlowActivity).getFlow()
 
         var ethernetMatch: EthernetMatch? = null
         var match = Match(null, null, null, null)
 
-
         for(i in selectedMatchData.indices){
             when(selectedMatchData[i].propId){
                 tag_match_inport -> {
-                    println("setFlow : tag_match_inport")
                     match.inPort = mView.spinner_in_port.selectedItem.toString()
                 }
                 tag_match_ehternettype -> {
-                    var ethernetType = EthernetType(mView.et_ethernet_type.text.toString().toInt())
-                    if(ethernetMatch != null){
-                        ethernetMatch?.ethernetType = ethernetType
+                    if(!mView.et_ethernet_type.text.isNullOrEmpty() && !mView.et_ethernet_type.text.isNullOrBlank()){
+                        try{
+                            val ethernetTypeValue = mView.et_ethernet_type.text.toString().toInt()
+                            if(ethernetTypeValue in 0..VALUE_MAX){
+                                mView.et_ethernet_type.error = null
+                                var ethernetType = EthernetType(ethernetTypeValue)
+                                if(ethernetMatch != null){
+                                    ethernetMatch?.ethernetType = ethernetType
+                                } else {
+                                    ethernetMatch = EthernetMatch(null, null, ethernetType)
+                                }
+                            } else {
+                                mView.et_ethernet_type.error = VALUE_ERROR
+                                isCompleted = false
+                            }
+                        } catch (e: Exception){
+                            mView.et_ethernet_type.error = VALUE_ERROR
+                            isCompleted = false
+                        }
                     } else {
-                        ethernetMatch = EthernetMatch(null, null, ethernetType)
+                        mView.et_ethernet_type.error = VALUE_CANT_BE_BLANK
+                        isCompleted = false
                     }
+
                 }
                 tag_match_macsource -> {
-                    var ethernetSource = EthernetSource(mView.et_mac_source.text.toString())
-                    if (ethernetMatch != null) {
-                        ethernetMatch?.ethernetSource = ethernetSource
+                    if(!mView.et_mac_source.text.isNullOrEmpty() && !mView.et_mac_source.text.isNullOrBlank() ){
+                        val macSource = mView.et_mac_source.text.toString()
+                        val colonCount = macSource.length - macSource.replace(":", "").length
+                        if(macSource.length == 17 && colonCount == 5) {
+                            mView.et_mac_source.error = null
+                            var ethernetSource = EthernetSource(mView.et_mac_source.text.toString())
+                            if (ethernetMatch != null) {
+                                ethernetMatch?.ethernetSource = ethernetSource
+                            } else {
+                                ethernetMatch = EthernetMatch(ethernetSource, null, null)
+                            }
+                        } else {
+                            mView.et_mac_source.error = VALUE_MAC_ADDR_ERROR
+                            isCompleted = false
+                        }
                     } else {
-                        ethernetMatch = EthernetMatch(ethernetSource, null, null)
+                        mView.et_mac_source.error = VALUE_CANT_BE_BLANK
+                        isCompleted = false
                     }
                 }
                 tag_match_macdest -> {
-                    var ethernetDestination = EthernetDestination(mView.et_mac_dest.text.toString())
-                    if(ethernetMatch != null){
-                        ethernetMatch?.ethernetDestination = ethernetDestination
+                    if(!mView.et_mac_dest.text.isNullOrEmpty() && !mView.et_mac_dest.text.isNullOrBlank()){
+                        val macDest = mView.et_mac_dest.text.toString()
+                        val colonCount = macDest.length - macDest.replace(":", "").length
+                        if(macDest.length == 17 && colonCount == 5) {
+                            mView.et_mac_dest.error = null
+                            var ethernetDestination = EthernetDestination(mView.et_mac_dest.text.toString())
+                            if(ethernetMatch != null){
+                                ethernetMatch?.ethernetDestination = ethernetDestination
+                            } else {
+                                ethernetMatch = EthernetMatch(null, ethernetDestination, null)
+                            }
+                        } else {
+                            mView.et_mac_dest.error = VALUE_MAC_ADDR_ERROR
+                            isCompleted = false
+                        }
                     } else {
-                        ethernetMatch = EthernetMatch(null, ethernetDestination, null)
+                        mView.et_mac_dest.error = VALUE_CANT_BE_BLANK
+                        isCompleted = false
                     }
                 }
                 tag_match_ipv4source -> {
-                    match.ipv4source = mView.et_ipv4_source.text.toString()
+                    if(!mView.et_ipv4_source.text.isNullOrEmpty() || !mView.et_ipv4_source.text.isNullOrBlank()){
+                        val ip = mView.et_ipv4_source.text.toString().trim()
+                        if(ip.contains("/")){
+                            val ipAddr = ip.substring(0, ip.lastIndexOf("/"))
+                            val netmask = ip.substring(ip.lastIndexOf("/")+1)
+                            try{
+                                if(validIP(ipAddr) && netmask.toInt() in 1..32){
+                                    mView.et_ipv4_source.error = null
+                                    match.ipv4source = ip
+                                } else {
+                                    mView.et_ipv4_source.error = VALUE_IP_ADDR_ERROR
+                                    isCompleted = false
+                                }
+                            } catch (e: Exception){
+                                mView.et_ipv4_source.error = VALUE_IP_ADDR_ERROR
+                                isCompleted = false
+                            }
+                        } else {
+                            mView.et_ipv4_source.error = VALUE_IP_ADDR_ERROR
+                            isCompleted = false
+                        }
+                    } else {
+                        mView.et_ipv4_source.error = VALUE_CANT_BE_BLANK
+                        isCompleted = false
+                    }
                 }
                 tag_match_ipv4dest -> {
-                    match.ipv4destination = mView.et_ipv4_dest.text.toString()
+                    if(!mView.et_ipv4_dest.text.isNullOrEmpty() || !mView.et_ipv4_dest.text.isNullOrBlank()){
+                        val ip = mView.et_ipv4_source.text.toString().trim()
+                        if(ip.contains("/")){
+                            val ipAddr = ip.substring(0, ip.lastIndexOf("/"))
+                            val netmask = ip.substring(ip.lastIndexOf("/")+1)
+                            try{
+                                if(validIP(ipAddr) && netmask.toInt() in 1..32){
+                                    mView.et_ipv4_dest.error = null
+                                    match.ipv4destination = ip
+                                }else {
+                                    mView.et_ipv4_dest.error = VALUE_IP_ADDR_ERROR
+                                    isCompleted = false
+                                }
+                            } catch (e: Exception){
+                                mView.et_ipv4_dest.error = VALUE_IP_ADDR_ERROR
+                                isCompleted = false
+                            }
+
+                        } else {
+                            mView.et_ipv4_dest.error = VALUE_IP_ADDR_ERROR
+                            isCompleted = false
+                        }
+
+                    } else {
+                        mView.et_ipv4_dest.error = VALUE_CANT_BE_BLANK
+                        isCompleted = false
+                    }
                 }
             }
 
         }
+
         match.ethernetMatch = ethernetMatch
         newFlow?.match = match
 
-        (activity as AddFlowActivity).setDataStatus(true)
+        if(isCompleted){
+            (activity as AddFlowActivity).setDataStatus(true)
+        } else {
+            (activity as AddFlowActivity).setDataStatus(false)
+        }
+
         return newFlow!!
+    }
+
+    fun validIP(ip: String?): Boolean {
+        try {
+            if (ip == null || ip.isEmpty()) {
+                return false
+            }
+
+            val parts = ip.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            if (parts.size != 4) {
+                return false
+            }
+
+            for (s in parts) {
+                val i = Integer.parseInt(s)
+                if (i < 0 || i > 255) {
+                    return false
+                }
+            }
+            if (ip.endsWith(".")) {
+                return false
+            }
+
+            return true
+        } catch (nfe: NumberFormatException) {
+            return false
+        }
     }
 }

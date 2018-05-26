@@ -11,6 +11,7 @@
         android:layout_weight="1"
         android:layout_height="wrap_content"
         android:hint="Idle Timeout"
+        android:digits="1234567890"
         android:inputType="numberDecimal"
         app:met_floatingLabel="highlight"
         app:met_baseColor="@color/colorPrimaryDark"

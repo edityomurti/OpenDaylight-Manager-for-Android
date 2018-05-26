@@ -16,6 +16,7 @@ import com.edityomurti.openflowmanagerapp.models.FlowProperties
 import com.edityomurti.openflowmanagerapp.models.flowtable.flow.Flow
 import kotlinx.android.synthetic.main.fragment_add_flow_general.*
 import kotlinx.android.synthetic.main.fragment_add_flow_general.view.*
+import kotlinx.android.synthetic.main.layout_prop_cookie.view.*
 import kotlinx.android.synthetic.main.layout_prop_hard_timeout.view.*
 import kotlinx.android.synthetic.main.layout_prop_idle_timeout.view.*
 
@@ -28,6 +29,10 @@ class AddFlowGeneralFragment : Fragment() {
     val tag_prop_hardtimeout = "prop_hardtimeout"
     val tag_prop_idletimeout = "prop_idletimeout"
     val tag_prop_cookie = "prop_cookie"
+
+    val VALUE_MAX = 65535
+    val VALUE_CANT_BE_BLANK = "Cannot be blank"
+    val VALUE_ERROR = "Value must between 0 - $VALUE_MAX"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -102,27 +107,100 @@ class AddFlowGeneralFragment : Fragment() {
     }
 
     fun setFlow(): Flow {
+        var isCompleted = true
+
         val newFlow = (activity as AddFlowActivity).getFlow()
 
         newFlow.tableId = 0
-        newFlow.id = et_id_flow.text.toString()
-        newFlow.priority = et_priority.text.toString().toInt()
+
+        if (!mView.et_id_flow.text.isNullOrBlank() && !mView.et_id_flow.text.isNullOrEmpty()){
+            val id = mView.et_id_flow.text.toString()
+            mView.et_id_flow.error = null
+            newFlow.id = id
+        } else {
+            mView.et_id_flow.error = VALUE_CANT_BE_BLANK
+            isCompleted = false
+        }
+
+        if(!mView.et_priority.text.isNullOrEmpty() && !mView.et_priority.text.isNullOrBlank()){
+            try{
+                val priority = mView.et_priority.text.toString().toInt()
+                if(priority in 0..VALUE_MAX){
+                    mView.et_priority.error = null
+                    newFlow.priority = priority
+                } else {
+                    mView.et_priority.error = VALUE_ERROR
+                    isCompleted = false
+                }
+            } catch (e: Exception){
+                mView.et_priority.error = VALUE_ERROR
+                isCompleted = false
+            }
+        } else {
+            mView.et_priority.error = VALUE_CANT_BE_BLANK
+            isCompleted = false
+        }
 
         for(i in selectedPropData.indices){
             when(selectedPropData[i].propId){
                 tag_prop_hardtimeout -> {
-                    newFlow.hardTimeOut = mView.et_hard_timeout.text.toString().toInt()
+                    if(!mView.et_hard_timeout.text.isNullOrEmpty() && !mView.et_hard_timeout.text.isNullOrBlank()){
+                        try{
+                            val hardTimeout = mView.et_hard_timeout.text.toString().toInt()
+                            if(hardTimeout in 0..VALUE_MAX){
+                                mView.et_hard_timeout.error = null
+                                newFlow.hardTimeOut = hardTimeout
+                            } else {
+                                mView.et_hard_timeout.error = VALUE_ERROR
+                                isCompleted = false
+                            }
+                        } catch (e: Exception){
+                            mView.et_hard_timeout.error = VALUE_ERROR
+                            isCompleted = false
+                        }
+                    } else {
+                        mView.et_hard_timeout.error = VALUE_CANT_BE_BLANK
+                        isCompleted = false
+                    }
                 }
                 tag_prop_idletimeout -> {
-                    newFlow.idleTimeOut = mView.et_idle_timeout.text.toString().toInt()
+                    if(!mView.et_idle_timeout.text.isNullOrEmpty() && !mView.et_idle_timeout.text.isNullOrBlank()){
+                        try{
+                            val idleTimeOut = mView.et_idle_timeout.text.toString().toInt()
+                            if(idleTimeOut in 0..VALUE_MAX){
+                                mView.et_idle_timeout.error = null
+                                newFlow.idleTimeOut = idleTimeOut
+                            } else {
+                                mView.et_idle_timeout.error = VALUE_ERROR
+                                isCompleted = false
+                            }
+                        } catch (e: Exception){
+                            mView.et_idle_timeout.error = VALUE_ERROR
+                            isCompleted = false
+                        }
+                    } else {
+                        mView.et_idle_timeout.error = VALUE_CANT_BE_BLANK
+                        isCompleted = false
+                    }
                 }
                 tag_prop_cookie -> {
-                    newFlow.cookie = mView.et_hard_timeout.text.toString().toBigInteger()
+                    if(!mView.et_cookie.text.isNullOrEmpty() && !mView.et_cookie.text.isNullOrBlank()){
+                        val cookie = mView.et_cookie.text.toString().toBigInteger()
+                        mView.et_cookie.error = null
+                        newFlow.cookie = cookie
+                    } else {
+                        mView.et_cookie.error = VALUE_CANT_BE_BLANK
+                        isCompleted = false
+                    }
                 }
             }
         }
 
-        (activity as AddFlowActivity).setDataStatus(true)
+        if(isCompleted){
+            (activity as AddFlowActivity).setDataStatus(true)
+        } else {
+            (activity as AddFlowActivity).setDataStatus(false)
+        }
 
         return newFlow
     }

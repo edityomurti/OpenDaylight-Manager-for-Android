@@ -70,7 +70,8 @@ class FlowDetailsActivity : AppCompatActivity() {
                 } else if(actionData[i].dropAction != null){
                     actionDrop = true
                 } else {
-                    var outputPort = inPort?.substring(0, inPort.lastIndexOf(":")+1) + actionData[i].outputAction?.outputNodeConnector
+//                    var outputPort = inPort?.substring(0, inPort.lastIndexOf(":")+1) + actionData[i].outputAction?.outputNodeConnector
+                    var outputPort = nodeId + ":" + actionData[i].outputAction?.outputNodeConnector
                     var outputPortMaxLength = actionData[i].outputAction?.maxLength
 
                     outputPortData.add(OutputPort(outputPort, outputPortMaxLength))

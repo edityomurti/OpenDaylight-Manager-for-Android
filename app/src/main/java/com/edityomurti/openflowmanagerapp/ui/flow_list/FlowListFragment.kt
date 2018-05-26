@@ -153,38 +153,38 @@ class FlowListFragment : Fragment() {
             }
         })
 
-//        restAdapter.getEndPoint().getFlowsConfig(nodeId, tableId).enqueue(object : retrofit2.Callback<FlowTableData>{
-//            override fun onResponse(call: Call<FlowTableData>?, response: Response<FlowTableData>?) {
-//                println("$TAG , getflowsconfig onResponse nodeId : $nodeId")
-//                if(response?.isSuccessful!!){
-//                    if(response.body()?.table?.size != 0){
-//                        if (response.body()?.table?.get(0) != null && response.body()?.table?.get(0)?.flowData?.size != 0 && response.body()?.table?.get(0)?.flowData?.size != null){
-//                            var flowDataList = response.body()?.table?.get(0)?.flowData
-//                            for (i in flowDataList?.indices!!){
-//                                flowDataList[i].flowType = "config"
-//                                flowDataList[i].nodeId = nodeId
-//                            }
-//
-//                            flowListAdapter.addData(flowDataList)
-//                            println("getflowsconfig, ADDING  FLOW")
-//                        } else {
-//                            println("getflowsconfig, NO DATA NULL FLOW")
-//                        }
-//                    } else {
-//                        println("getflowsconfig, NO DATA NULL DATA")
-//                    }
-//                } else {
-//                    println("$TAG , getflowsconfig isNOTSuccessful")
-//                    println("$TAG , getflowsconfig nodeId : $nodeId")
-//                    println("$TAG , getflowsconfig  response code ${response.code()}")
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<FlowTableData>?, t: Throwable?) {
-//                println("$TAG , getflowsconfig onFailure nodeId : $nodeId ")
-//                println("$TAG , getflowsconfig onFailure message : ${t?.message} ")
-//            }
-//        })
+        restAdapter.getEndPoint().getFlowsConfig(nodeId, tableId).enqueue(object : retrofit2.Callback<FlowTableData>{
+            override fun onResponse(call: Call<FlowTableData>?, response: Response<FlowTableData>?) {
+                println("$TAG , getflowsconfig onResponse nodeId : $nodeId")
+                if(response?.isSuccessful!!){
+                    if(response.body()?.table?.size != 0){
+                        if (response.body()?.table?.get(0) != null && response.body()?.table?.get(0)?.flowData?.size != 0 && response.body()?.table?.get(0)?.flowData?.size != null){
+                            var flowDataList = response.body()?.table?.get(0)?.flowData
+                            for (i in flowDataList?.indices!!){
+                                flowDataList[i].flowType = "config"
+                                flowDataList[i].nodeId = nodeId
+                            }
+
+                            flowListAdapter.addData(flowDataList)
+                            println("getflowsconfig, ADDING  FLOW")
+                        } else {
+                            println("getflowsconfig, NO DATA NULL FLOW")
+                        }
+                    } else {
+                        println("getflowsconfig, NO DATA NULL DATA")
+                    }
+                } else {
+                    println("$TAG , getflowsconfig isNOTSuccessful")
+                    println("$TAG , getflowsconfig nodeId : $nodeId")
+                    println("$TAG , getflowsconfig  response code ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<FlowTableData>?, t: Throwable?) {
+                println("$TAG , getflowsconfig onFailure nodeId : $nodeId ")
+                println("$TAG , getflowsconfig onFailure message : ${t?.message} ")
+            }
+        })
     }
 
     fun showLoading(isLoading: Boolean){
