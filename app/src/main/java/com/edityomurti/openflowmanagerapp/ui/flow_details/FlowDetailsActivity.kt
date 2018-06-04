@@ -258,10 +258,10 @@ class FlowDetailsActivity : AppCompatActivity() {
                             progressDialog.dismiss()
                             if(response!!.isSuccessful){
                                 Toast.makeText(this@FlowDetailsActivity, "Flow deleted", Toast.LENGTH_SHORT).show()
+                                finish()
                             } else {
                                 Toast.makeText(this@FlowDetailsActivity, "Delete failed", Toast.LENGTH_SHORT).show()
                             }
-                            finish()
                         }
 
                         override fun onFailure(call: Call<ResponseBody>?, t: Throwable?) {
@@ -299,7 +299,9 @@ class FlowDetailsActivity : AppCompatActivity() {
     )
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater?.inflate(R.menu.menu_flow_details, menu)
+        if(flow.flowType == Constants.DATA_TYPE_CONFIG){
+            menuInflater?.inflate(R.menu.menu_flow_details, menu)
+        }
         return super.onCreateOptionsMenu(menu)
     }
 }

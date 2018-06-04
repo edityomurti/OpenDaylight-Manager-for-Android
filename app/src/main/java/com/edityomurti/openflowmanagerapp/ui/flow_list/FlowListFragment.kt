@@ -75,13 +75,17 @@ class FlowListFragment : Fragment() {
         nodeList.clear()
         restAdapter.getEndPoint().getInventoryNodes().enqueue(object : Callback<Nodes> {
             override fun onResponse(call: Call<Nodes>?, response: Response<Nodes>?) {
+                showLoading(false)
                 if(response?.isSuccessful!!){
-                    if(response.body() != null || response.body()?.nodeData?.node?.size != 0){
+                    if(response.body() != null && response.body()?.nodeData?.node?.size != 0 && response.body()?.nodeData?.node?.size != null){
                         getFlowsId(response.body()?.nodeData?.node!!)
+                        showNoData(false)
+                    } else {
+                        showNoData(true)
                     }
                     showNoConnection(false)
+                    showRV(true)
                 } else {
-                    showLoading(false)
                     showNoConnection(true)
                     showRV(false)
                 }
@@ -209,6 +213,14 @@ class FlowListFragment : Fragment() {
             mView.rv_list_flow.visibility = View.VISIBLE
         } else {
             mView.rv_list_flow.visibility = View.GONE
+        }
+    }
+
+    fun showNoData(isShowing: Boolean){
+        if(isShowing){
+            mView.ll_no_data.visibility = View.VISIBLE
+        } else {
+            mView.ll_no_data.visibility = View.GONE
         }
     }
 

@@ -263,6 +263,9 @@ class AddFlowActivity : AppCompatActivity() {
 
     fun sendFlow(){
         var progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Applying Flow ..")
+        progressDialog.setCancelable(false)
+        progressDialog.setCanceledOnTouchOutside(false)
         progressDialog.show()
 
         val nodeId = newFlow.nodeId
@@ -278,13 +281,13 @@ class AddFlowActivity : AppCompatActivity() {
                     override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
                         if(response!!.isSuccessful){
                             Toast.makeText(this@AddFlowActivity, "Flow Added!", Toast.LENGTH_SHORT).show()
+                            progressDialog.dismiss()
                             finish()
                         } else {
                             Toast.makeText(this@AddFlowActivity, "Failed Adding Flow", Toast.LENGTH_SHORT).show()
                             newFlow.nodeId = nodeId
                             progressDialog.dismiss()
                         }
-
                     }
 
                     override fun onFailure(call: Call<ResponseBody>?, t: Throwable?) {

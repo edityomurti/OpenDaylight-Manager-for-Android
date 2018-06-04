@@ -69,30 +69,35 @@ class DeviceListFragment : Fragment() {
                     var nodesData = response.body()?.topologyData?.topology?.get(0)?.nodeData
                     var linkData = response.body()?.topologyData?.topology?.get(0)?.linkData
 
-                    for(i in nodesData?.indices!!){
-                        var deviceType = if(nodesData[i].hostTrackerId == null){
-                            Constants.DEVICE_TYPE_SWITCH
-                        } else {
-                            Constants.DEVICE_TYPE_HOST
-                        }
-                        var deviceName = nodesData[i].nodeId
-                        var deviceDesc = if(deviceType.equals(Constants.DEVICE_TYPE_SWITCH)){
-                            "${nodesData[i].terminationPointData.size-1} nodes"
-                        } else {
-                            "${nodesData[i].hostTrackerAddressesData[0].ip}"
-                        }
-                        var linkDevice: MutableList<Link> = ArrayList()
-                        if(linkData?.size != null){
-                            for(j in linkData?.indices!!){
-                                if(linkData[j].source?.sourceNode?.equals(deviceName)!!){
-                                    linkDevice.add(linkData[j])
+                    if(nodesData?.size != 0 && nodesData?.size != null){
+                        showNoData(false)
+                        for(i in nodesData?.indices!!){
+                            var deviceType = if(nodesData[i].hostTrackerId == null){
+                                Constants.DEVICE_TYPE_SWITCH
+                            } else {
+                                Constants.DEVICE_TYPE_HOST
+                            }
+                            var deviceName = nodesData[i].nodeId
+                            var deviceDesc = if(deviceType.equals(Constants.DEVICE_TYPE_SWITCH)){
+                                "${nodesData[i].terminationPointData.size-1} nodes"
+                            } else {
+                                "${nodesData[i].hostTrackerAddressesData[0].ip}"
+                            }
+                            var linkDevice: MutableList<Link> = ArrayList()
+                            if(linkData?.size != null){
+                                for(j in linkData?.indices!!){
+                                    if(linkData[j].source?.sourceNode?.equals(deviceName)!!){
+                                        linkDevice.add(linkData[j])
+                                    }
                                 }
                             }
+                            deviceData.add(Device(deviceName, deviceDesc, deviceType, linkDevice))
+                            deviceData.sortWith(compareBy({it.deviceType}, {it.deviceName}))
+                            deviceData.reverse()
+                            deviceListAdapter.setData(deviceData)
                         }
-                        deviceData.add(Device(deviceName, deviceDesc, deviceType, linkDevice))
-                        deviceData.sortWith(compareBy({it.deviceType}, {it.deviceName}))
-                        deviceData.reverse()
-                        deviceListAdapter.setData(deviceData)
+                    } else {
+                        showNoData(true)
                     }
                 } else {
                     showNoConnection(true)
@@ -133,6 +138,14 @@ class DeviceListFragment : Fragment() {
             mView.rv_device_list.visibility = View.VISIBLE
         } else {
             mView.rv_device_list.visibility = View.GONE
+        }
+    }
+
+    fun showNoData(isShowing: Boolean){
+        if(isShowing){
+            mView.ll_no_data.visibility = View.VISIBLE
+        } else {
+            mView.ll_no_data.visibility = View.GONE
         }
     }
 

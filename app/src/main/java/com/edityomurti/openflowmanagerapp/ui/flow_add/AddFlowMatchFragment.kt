@@ -311,7 +311,7 @@ class AddFlowMatchFragment : Fragment() {
                 }
                 tag_match_ipv4dest -> {
                     if(!mView.et_ipv4_dest.text.isNullOrEmpty() || !mView.et_ipv4_dest.text.isNullOrBlank()){
-                        val ip = mView.et_ipv4_source.text.toString().trim()
+                        val ip = mView.et_ipv4_dest.text.toString().trim()
                         if(ip.contains("/")){
                             val ipAddr = ip.substring(0, ip.lastIndexOf("/"))
                             val netmask = ip.substring(ip.lastIndexOf("/")+1)
