@@ -13,7 +13,6 @@
         android:hint="IPv4 Destination"
         android:inputType="text"
         android:digits="0123456789./"
-        android:maxLength="15"
         app:met_floatingLabel="highlight"
         app:met_baseColor="@color/colorPrimaryDark"
         app:met_primaryColor="@color/colorPrimary"

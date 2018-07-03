@@ -92,7 +92,7 @@ class AddFlowMatchFragment : Fragment() {
             arrayAdapter.add(matchData[i].propName)
         }
 
-        alertDialog.setAdapter(arrayAdapter) { dialog, which ->
+            alertDialog.setAdapter(arrayAdapter) { dialog, which ->
             val view = inflater.inflate(matchData[which].layoutView, null, false)
             val btnDelete = view.findViewById<ImageView>(R.id.iv_delete)
             val match = matchData[which]

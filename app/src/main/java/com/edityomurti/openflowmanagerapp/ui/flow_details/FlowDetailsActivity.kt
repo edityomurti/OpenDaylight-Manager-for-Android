@@ -1,7 +1,7 @@
 package com.edityomurti.openflowmanagerapp.ui.flow_details
 
 import android.app.ProgressDialog
-import android.content.DialogInterface
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -12,6 +12,8 @@ import android.widget.Toast
 import com.edityomurti.openflowmanagerapp.R
 import com.edityomurti.openflowmanagerapp.models.flowtable.flow.Action
 import com.edityomurti.openflowmanagerapp.models.flowtable.flow.Flow
+import com.edityomurti.openflowmanagerapp.models.topology.NodeDataSerializable
+import com.edityomurti.openflowmanagerapp.ui.flow_add.AddFlowActivity
 import com.edityomurti.openflowmanagerapp.utils.Constants
 import com.edityomurti.openflowmanagerapp.utils.RestAdapter
 import kotlinx.android.synthetic.main.activity_flow_details.*
@@ -24,6 +26,9 @@ class FlowDetailsActivity : AppCompatActivity() {
     lateinit var flow: Flow
     lateinit var bundle: Bundle
     lateinit var restAdapter: RestAdapter
+
+    lateinit var nodeList: ArrayList<String>
+    var nodeData: NodeDataSerializable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -270,7 +275,6 @@ class FlowDetailsActivity : AppCompatActivity() {
                         }
                     })
         }
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -287,10 +291,29 @@ class FlowDetailsActivity : AppCompatActivity() {
                     dialog.dismiss()
                 }
                 alertDialog.show()
-
             }
+            R.id.action_edit -> openEditFlowActivity()
         }
         return true
+    }
+
+    fun openEditFlowActivity(){
+        nodeList = intent.getStringArrayListExtra(Constants.NODE_LIST)
+        nodeData = intent.getSerializableExtra(Constants.NODE_DATA) as NodeDataSerializable
+
+        if(nodeList.size > 0){
+            var extras = Bundle()
+            extras.putSerializable(Constants.NODE_DATA, nodeData)
+            extras.putSerializable(Constants.OBJECT_FLOW, flow)
+
+            val intent = Intent(this@FlowDetailsActivity, AddFlowActivity::class.java)
+            intent.putStringArrayListExtra(Constants.NODE_LIST, nodeList)
+            intent.putExtras(extras)
+            intent.putExtra(Constants.ADD_MODE, Constants.MODE_EDIT)
+            startActivity(intent)
+        } else {
+            Toast.makeText(this, "An error has occurred", Toast.LENGTH_SHORT).show()
+        }
     }
 
     data class OutputPort(

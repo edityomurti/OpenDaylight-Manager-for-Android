@@ -23,9 +23,7 @@ import retrofit2.Response
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.view.inputmethod.InputMethodManager
 
-
 class AddFlowActivity : AppCompatActivity() {
-
     val TAG_SELECT_DEVICE_FRAGMENT = "TAG_SELECT_DEVICE_FRAGMENT"
     val TAG_GENERAL_PROPERTIES_FRAGMENT = "TAG_GENERAL_PROPERTIES"
     val TAG_MATCH_FRAGMENT = "TAG_MATCH_FRAGMENT"
@@ -49,17 +47,34 @@ class AddFlowActivity : AppCompatActivity() {
     var dataStatus: Boolean? = false
 
     var restAdapter: RestAdapter? = null
+    var addMode: String? = null
+
+    var titleMode: String = "Add Flow"
+
+    var modeAdd: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_flow)
 
-        title = "Add Flow"
+        title = titleMode
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        addMode = intent.getStringExtra(Constants.ADD_MODE)
         nodeList = intent.getStringArrayListExtra(Constants.NODE_LIST)
         nodeData = intent.getSerializableExtra(Constants.NODE_DATA) as NodeDataSerializable
 
+
+        modeAdd = addMode == Constants.MODE_ADD
+
+        if(modeAdd){
+            currentPosition = 1
+            titleMode = "Add Flow"
+        } else {
+            currentPosition = 2
+            titleMode = "Edit Flow"
+            newFlow = intent.extras.getSerializable(Constants.OBJECT_FLOW) as Flow
+        }
         selectDeviceFragment = AddFlowSelectDeviceFragment.newInstance(nodeList)
         generalPropertiesFragment = AddFlowGeneralFragment()
         matchFragment = AddFlowMatchFragment.newInstance(nodeData!!)
@@ -84,25 +99,31 @@ class AddFlowActivity : AppCompatActivity() {
     }
 
     fun setNavigation(){
-        val focus = this.currentFocus
-        if(focus != null){
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(focus.windowToken, 0)
-        }
         when(currentPosition){
             1 -> {
                 btn_previous.visibility = View.INVISIBLE
                 tv_next.visibility = View.VISIBLE
-                title = "Add Flow: Select Device"
+                title = "$titleMode: Select Device"
                 showSelectDevice()
             }
             2 -> {
-                this.newFlow = selectDeviceFragment.setFlow()
+                println("AddFlow, setNav current == 2")
+                if(modeAdd){
+                    this.newFlow = selectDeviceFragment.setFlow()
+                } else {
+                    dataStatus = true
+                }
+
                 if(dataStatus!!){
-                    btn_previous.visibility = View.VISIBLE
-                    btn_next.visibility = View.VISIBLE
+                    if(addMode == Constants.MODE_ADD){
+                        btn_previous.visibility = View.VISIBLE
+                        btn_next.visibility = View.VISIBLE
+                    } else {
+                        btn_previous.visibility = View.INVISIBLE
+                        btn_next.visibility = View.VISIBLE
+                    }
                     tv_next.text = "Next"
-                    title = "Add Flow: General Properties"
+                    title = "$titleMode: General Properties"
                     showGeneralProp()
                 } else {
                     currentPosition -= 1
@@ -110,9 +131,12 @@ class AddFlowActivity : AppCompatActivity() {
             }
             3 -> {
                 this.newFlow = generalPropertiesFragment.setFlow()
+
                 if(dataStatus!!){
+                    btn_previous.visibility = View.VISIBLE
+                    btn_next.visibility = View.VISIBLE
                     showMatch()
-                    title = "Add Flow: Match"
+                    title = "$titleMode: Match"
                     tv_next.text = "Next"
                 } else {
                     currentPosition -= 1
@@ -125,7 +149,7 @@ class AddFlowActivity : AppCompatActivity() {
                     btn_next.visibility = View.VISIBLE
                     tv_next.text = "Review"
                     showAction()
-                    title = "Add Flow: Action"
+                    title = "$titleMode: Action"
                 } else {
                     currentPosition -= 1
                 }
@@ -136,8 +160,7 @@ class AddFlowActivity : AppCompatActivity() {
                     btn_previous.visibility = View.VISIBLE
                     btn_next.visibility = View.VISIBLE
                     tv_next.text = "Finish"
-                    title = "Add Flow: Review"
-                    println("cek match : ${newFlow.match}")
+                    title = "$titleMode: Review"
                     showReview()
                 } else {
                     currentPosition -= 1
@@ -147,6 +170,11 @@ class AddFlowActivity : AppCompatActivity() {
             6 -> {
                 sendFlow()
             }
+        }
+        val focus = this.currentFocus
+        if(focus != null){
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(focus.windowToken, 0)
         }
     }
 
@@ -181,8 +209,15 @@ class AddFlowActivity : AppCompatActivity() {
         if(supportFragmentManager.findFragmentByTag(TAG_GENERAL_PROPERTIES_FRAGMENT) != null){
             transaction.show(supportFragmentManager.findFragmentByTag(TAG_GENERAL_PROPERTIES_FRAGMENT))
             generalPropertiesFragment.setData()
+            println("AddFlow, NOT show generalProperties fragment")
         }else {
+            println("AddFlow, show generalProperties fragment")
             transaction.add(R.id.fragment_container, generalPropertiesFragment, TAG_GENERAL_PROPERTIES_FRAGMENT)
+            val focus = this.currentFocus
+            if(focus != null){
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(focus.windowToken, 0)
+            }
         }
         transaction.commitAllowingStateLoss()
     }
@@ -255,6 +290,10 @@ class AddFlowActivity : AppCompatActivity() {
 
     fun setFlow(newFlow: Flow){
         this.newFlow = newFlow
+    }
+
+    fun getMode(): Boolean{
+        return this.modeAdd
     }
 
     fun onClickNavigation(){

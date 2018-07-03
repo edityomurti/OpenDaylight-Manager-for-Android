@@ -50,7 +50,7 @@ class FlowListFragment : Fragment() {
         activity?.title = "Flow Table"
 
         sharedPreferences = activity?.getSharedPreferences(Constants.DEFAULT_PREFS_NAME, Activity.MODE_PRIVATE)!!
-        flowListAdapter = FlowListAdapter(context!!, dataList)
+        flowListAdapter = FlowListAdapter(context!!, dataList, nodeList, nodeData)
         layoutManager = LinearLayoutManager(context)
 
         setupRV()
@@ -129,14 +129,14 @@ class FlowListFragment : Fragment() {
                 showLoading(false)
                 if(response?.isSuccessful!!){
                     if(response.body()?.table?.size != 0){
-                        if (response.body()?.table?.get(0) != null || response.body()?.table?.get(0)?.flowData?.size != 0){
+                        if (response.body()?.table?.get(0) != null && response.body()?.table?.get(0)?.flowData?.size != 0 && response.body()?.table?.get(0)?.flowData?.size != null){
                             var flowDataList = response.body()?.table?.get(0)?.flowData
                             for (i in flowDataList?.indices!!){
                                 flowDataList[i].flowType = "operational"
                                 flowDataList[i].nodeId = nodeId
                             }
 
-                            flowListAdapter.addData(flowDataList)
+                            flowListAdapter.addData(flowDataList, nodeList, nodeData)
                         } else {
                         }
                     } else {
@@ -169,7 +169,7 @@ class FlowListFragment : Fragment() {
                                 flowDataList[i].nodeId = nodeId
                             }
 
-                            flowListAdapter.addData(flowDataList)
+                            flowListAdapter.addData(flowDataList, nodeList, nodeData)
                             println("getflowsconfig, ADDING  FLOW")
                         } else {
                             println("getflowsconfig, NO DATA NULL FLOW")
@@ -232,12 +232,11 @@ class FlowListFragment : Fragment() {
             val intent = Intent(context, AddFlowActivity::class.java)
             intent.putStringArrayListExtra(Constants.NODE_LIST, nodeList)
             intent.putExtras(extras)
+            intent.putExtra(Constants.ADD_MODE, Constants.MODE_ADD)
             startActivity(intent)
         } else {
             Toast.makeText(context, "No devices found!", Toast.LENGTH_SHORT).show()
         }
-
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

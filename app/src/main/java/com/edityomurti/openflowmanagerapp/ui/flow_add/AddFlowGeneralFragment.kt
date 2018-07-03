@@ -24,6 +24,7 @@ class AddFlowGeneralFragment : Fragment() {
     lateinit var mView: View
 
     var propData: MutableList<FlowProperties> = ArrayList()
+
     var selectedPropData: MutableList<FlowProperties> = ArrayList()
 
     val tag_prop_hardtimeout = "prop_hardtimeout"
@@ -34,14 +35,19 @@ class AddFlowGeneralFragment : Fragment() {
     val VALUE_CANT_BE_BLANK = "Cannot be blank"
     val VALUE_ERROR = "Value must between 0 - $VALUE_MAX"
 
+    var newFlow: Flow? = null
+
+    var modeAdd = true
+
+    var inflater: LayoutInflater? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_add_flow_general, container, false)
+        this.inflater = inflater
 
-        activity?.title = "Add Flow: General Properties"
-
-        setData()
         setDefaultData()
+        setData()
 
         var arrayAdapter = ArrayAdapter<String>(context, android.R.layout.simple_list_item_1)
         var alertDialog = AlertDialog.Builder(context)
@@ -88,13 +94,96 @@ class AddFlowGeneralFragment : Fragment() {
     }
 
     fun setData(){
+        this.modeAdd = (activity as AddFlowActivity).getMode()
+
+        newFlow = (activity as AddFlowActivity).getFlow()
+
         (activity as AddFlowActivity).setDataStatus(false)
-        mView.tv_device.text = (activity as AddFlowActivity).getFlow().nodeId
+        mView.tv_device.text = newFlow?.nodeId
+
+        if(modeAdd){
+            activity?.title = "Add Flow: General Properties"
+        } else {
+            activity?.title = "Edit Flow: General Properties"
+
+            val flowId = newFlow?.id
+            val priority = newFlow?.priority
+            val hardTimeOut = newFlow?.hardTimeOut
+            val idleTimeOut = newFlow?.idleTimeOut
+            val cookie = newFlow?.cookie
+
+//             IF ELSE KONDISI PENAMPILAN DATA
+            if(flowId != null){
+                mView.et_id_flow.setText(flowId)
+                mView.et_id_flow.isEnabled = false
+            }
+
+            if(priority != null){
+                mView.et_priority.setText(priority.toString())
+            }
+
+            if(hardTimeOut != null){
+                println("AddView, adding 0")
+                addView(0)
+
+                mView.et_hard_timeout.visibility = View.VISIBLE
+                mView.et_hard_timeout.setText(hardTimeOut.toString())
+            }
+
+            if(idleTimeOut != null){
+                println("AddView, adding 1")
+                addView(1)
+
+                mView.et_idle_timeout.visibility = View.VISIBLE
+                mView.et_idle_timeout.setText(idleTimeOut.toString())
+            }
+
+            if(cookie != null){
+                println("AddView, adding 2")
+                addView(2)
+
+                mView.et_cookie.visibility = View.VISIBLE
+                mView.et_cookie.setText(cookie.toString())
+            }
+        }
+    }
+
+    fun addView(which: Int){
+        val view = inflater?.inflate(propData[which].layoutView, null, false)
+        val btnDelete = view?.findViewById<ImageView>(R.id.iv_delete)
+        val prop = propData[which]
+
+//        btnDelete?.setOnClickListener {
+//            (view.parent as LinearLayout).removeView(view)
+//            selectedPropData.remove(prop)
+//            propData.add(prop)
+////                    arrayAdapter.add(prop.propName)
+////                    arrayAdapter.notifyDataSetChanged()
+////                    if(arrayAdapter.count == 1){
+////                        mView.btn_add_properties.visibility = View.VISIBLE
+////                    }
+//        }
+
+        btnDelete?.visibility = View.GONE
+
+//        selectedPropData.add(prop)
+//                arrayAdapter.remove(prop.propName)
+//                arrayAdapter.notifyDataSetChanged()
+//        propData.remove(prop)
+
+        mView.ll_properties.addView(view)
+//                if(arrayAdapter.count == 0){
+//                    mView.btn_add_properties.visibility = View.GONE
+//                } else {
+//                    mView.btn_add_properties.visibility = View.VISIBLE
+//                }
     }
 
     fun setDefaultData(){
         propData.clear()
         selectedPropData.clear()
+
+        newFlow = (activity as AddFlowActivity).getFlow()
 
         var hardTimeoutProp = FlowProperties(tag_prop_hardtimeout, "Hard timeout", R.layout.layout_prop_hard_timeout)
         propData.add(hardTimeoutProp)
@@ -109,14 +198,14 @@ class AddFlowGeneralFragment : Fragment() {
     fun setFlow(): Flow {
         var isCompleted = true
 
-        val newFlow = (activity as AddFlowActivity).getFlow()
+        newFlow = (activity as AddFlowActivity).getFlow()
 
-        newFlow.tableId = 0
+        newFlow?.tableId = 0
 
         if (!mView.et_id_flow.text.isNullOrBlank() && !mView.et_id_flow.text.isNullOrEmpty()){
             val id = mView.et_id_flow.text.toString()
             mView.et_id_flow.error = null
-            newFlow.id = id
+            newFlow?.id = id
         } else {
             mView.et_id_flow.error = VALUE_CANT_BE_BLANK
             isCompleted = false
@@ -127,7 +216,7 @@ class AddFlowGeneralFragment : Fragment() {
                 val priority = mView.et_priority.text.toString().toInt()
                 if(priority in 0..VALUE_MAX){
                     mView.et_priority.error = null
-                    newFlow.priority = priority
+                    newFlow?.priority = priority
                 } else {
                     mView.et_priority.error = VALUE_ERROR
                     isCompleted = false
@@ -149,7 +238,7 @@ class AddFlowGeneralFragment : Fragment() {
                             val hardTimeout = mView.et_hard_timeout.text.toString().toInt()
                             if(hardTimeout in 0..VALUE_MAX){
                                 mView.et_hard_timeout.error = null
-                                newFlow.hardTimeOut = hardTimeout
+                                newFlow?.hardTimeOut = hardTimeout
                             } else {
                                 mView.et_hard_timeout.error = VALUE_ERROR
                                 isCompleted = false
@@ -169,7 +258,7 @@ class AddFlowGeneralFragment : Fragment() {
                             val idleTimeOut = mView.et_idle_timeout.text.toString().toInt()
                             if(idleTimeOut in 0..VALUE_MAX){
                                 mView.et_idle_timeout.error = null
-                                newFlow.idleTimeOut = idleTimeOut
+                                newFlow?.idleTimeOut = idleTimeOut
                             } else {
                                 mView.et_idle_timeout.error = VALUE_ERROR
                                 isCompleted = false
@@ -187,7 +276,7 @@ class AddFlowGeneralFragment : Fragment() {
                     if(!mView.et_cookie.text.isNullOrEmpty() && !mView.et_cookie.text.isNullOrBlank()){
                         val cookie = mView.et_cookie.text.toString().toBigInteger()
                         mView.et_cookie.error = null
-                        newFlow.cookie = cookie
+                        newFlow?.cookie = cookie
                     } else {
                         mView.et_cookie.error = VALUE_CANT_BE_BLANK
                         isCompleted = false
@@ -202,6 +291,6 @@ class AddFlowGeneralFragment : Fragment() {
             (activity as AddFlowActivity).setDataStatus(false)
         }
 
-        return newFlow
+        return newFlow!!
     }
 }

@@ -17,5 +17,8 @@ class Constants{
         val DATA_TYPE_OPERATIONAL = "operational"
         val NODE_LIST = "NODE_LIST"
         val NODE_DATA = "NODE_DATA"
+        val ADD_MODE = "ADD_MODE"
+        val MODE_ADD = "MODE_ADD"
+        val MODE_EDIT = "MODE_EDIT"
     }
 }

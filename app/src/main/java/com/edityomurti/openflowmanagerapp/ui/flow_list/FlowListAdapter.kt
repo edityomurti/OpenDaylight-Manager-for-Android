@@ -9,11 +9,15 @@ import android.view.View
 import android.view.ViewGroup
 import com.edityomurti.openflowmanagerapp.R
 import com.edityomurti.openflowmanagerapp.models.flowtable.flow.Flow
+import com.edityomurti.openflowmanagerapp.models.topology.NodeDataSerializable
 import com.edityomurti.openflowmanagerapp.ui.flow_details.FlowDetailsActivity
 import com.edityomurti.openflowmanagerapp.utils.Constants
 import kotlinx.android.synthetic.main.item_flow.view.*
 
-class FlowListAdapter(private var context: Context, private var dataList: MutableList<Flow>): RecyclerView.Adapter<FlowListAdapter.FlowListViewHolder>(){
+class FlowListAdapter(private var context: Context,
+                      private var dataList: MutableList<Flow>,
+                      private var nodeList: ArrayList<String>,
+                      private var nodeData: NodeDataSerializable?): RecyclerView.Adapter<FlowListAdapter.FlowListViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FlowListViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_flow, parent, false)
@@ -40,6 +44,14 @@ class FlowListAdapter(private var context: Context, private var dataList: Mutabl
         val bundle = Bundle()
         bundle.putSerializable(Constants.OBJECT_FLOW, flow)
         val intent = Intent(context, FlowDetailsActivity::class.java)
+        if(flow.flowType == Constants.DATA_TYPE_CONFIG){
+            var extras = Bundle()
+            extras.putSerializable(Constants.NODE_DATA, nodeData)
+            intent.putExtras(extras)
+            intent.putStringArrayListExtra(Constants.NODE_LIST, nodeList)
+        } else {
+
+        }
         intent.putExtras(bundle)
         context.startActivity(intent)
     }
@@ -47,14 +59,16 @@ class FlowListAdapter(private var context: Context, private var dataList: Mutabl
     fun setData(dataList: MutableList<Flow>){
         this.dataList.clear()
         this.dataList.addAll(dataList)
-//        this.dataList.sortBy { it.nodeId }
         this.dataList.sortWith(compareBy({it.nodeId}))
         notifyDataSetChanged()
     }
 
-    fun addData(dataList: MutableList<Flow>){
+    fun addData(dataList: MutableList<Flow>,
+                nodeList: ArrayList<String>,
+                nodeData: NodeDataSerializable?){
+        this.nodeList = nodeList
+        this.nodeData = nodeData
         this.dataList.addAll(dataList)
-//        this.dataList.sortBy { it.nodeId }
 
         this.dataList.sortWith(compareBy({it.nodeId}, {it.priority}))
         this.dataList.reverse()

@@ -1,6 +1,5 @@
 package com.edityomurti.openflowmanagerapp.ui.flow_add
 
-
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -15,7 +14,6 @@ import kotlinx.android.synthetic.main.fragment_add_flow_select_device.*
 import kotlinx.android.synthetic.main.fragment_add_flow_select_device.view.*
 
 class AddFlowSelectDeviceFragment : Fragment() {
-
     lateinit var mView: View
 
     companion object {
@@ -31,7 +29,6 @@ class AddFlowSelectDeviceFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_add_flow_select_device, container, false)
-
         activity?.title = "Add Flow: Select Device"
 
         if(arguments != null){
