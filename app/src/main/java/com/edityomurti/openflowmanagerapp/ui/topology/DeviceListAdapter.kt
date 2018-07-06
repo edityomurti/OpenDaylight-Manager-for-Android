@@ -3,7 +3,9 @@ package com.edityomurti.openflowmanagerapp.ui.topology
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.provider.SyncStateContract
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +21,7 @@ import com.github.aakira.expandablelayout.Utils
 import kotlinx.android.synthetic.main.item_device.view.*
 import kotlinx.android.synthetic.main.item_node_link.view.*
 
-class DeviceListAdapter(private var deviceData: MutableList<Device>): RecyclerView.Adapter<DeviceListAdapter.DeviceListViewHolder>(){
+class DeviceListAdapter(private var deviceData: MutableList<Device>, private var deviceColorList: MutableList<Int>): RecyclerView.Adapter<DeviceListAdapter.DeviceListViewHolder>(){
     var expandState: SparseBooleanArray = SparseBooleanArray()
 
     lateinit var context: Context
@@ -44,16 +46,29 @@ class DeviceListAdapter(private var deviceData: MutableList<Device>): RecyclerVi
                 holder.itemView.tv_device_type.visibility = View.GONE
             }
             holder.itemView.iv_device.setImageResource(R.drawable.ic_switch_new)
-            holder.itemView.tv_device_name.text = deviceData[position].deviceName
+            var deviceName = deviceData[position].deviceName
+            holder.itemView.tv_device_name.text = deviceName
             holder.itemView.tv_device_node.text = deviceData[position].deviceDesc
+
 
             if(deviceData[position].linkDevice.size != 0 && deviceData[position].linkDevice.size != null){
                 var linkDevice = deviceData[position].linkDevice
 
                 for(i in linkDevice.indices){
                     var linkView = LayoutInflater.from(context).inflate(R.layout.item_node_link, null, false)
-                    linkView.tv_host_name.text = linkDevice.get(i).destination?.destNode
+                    var hostName = linkDevice.get(i).destination?.destNode
+                    linkView.tv_host_name.text = hostName
+                    if(hostName!!.contains("host")){
+                        try {
+                            linkView.tv_host_name.setTextColor(deviceColorList.get(hostName.get(18).toString().toInt()))
+                        } catch (e: Exception){
+                            Log.e("Failed assign color,", e.toString())
+                        }
+                    } else {
+                        linkView.tv_host_name.setTextColor(ContextCompat.getColor(context, R.color.colorPrimaryLight))
+                    }
                     println("link device i : $i ,pos : $position = ${linkDevice.get(i).destination?.destNode}")
+
                     linkView.tv_port_number.text = linkDevice.get(i).source?.sourceTp?.substring(linkDevice.get(i).source?.sourceTp?.lastIndexOf(":")!!+1)
                     holder.itemView.expandable_layout.addView(linkView)
                 }
@@ -71,7 +86,15 @@ class DeviceListAdapter(private var deviceData: MutableList<Device>): RecyclerVi
                 holder.itemView.tv_device_type.visibility = View.GONE
             }
             holder.itemView.iv_device.setImageResource(R.drawable.ic_laptop_new)
-            holder.itemView.tv_device_name.text = deviceData[position].deviceName
+            var deviceName = deviceData[position].deviceName
+            holder.itemView.tv_device_name.text = deviceName
+            try{
+                holder.itemView.tv_device_name.setTextColor(deviceColorList.get(deviceName?.get(18).toString().toInt()))
+            } catch (e: Exception){
+                Log.e("Failed assign color, ", e.toString())
+            }
+
+
             holder.itemView.tv_device_node.text = deviceData[position].deviceDesc
             var linkDevice = deviceData[position].linkDevice
 
@@ -96,7 +119,7 @@ class DeviceListAdapter(private var deviceData: MutableList<Device>): RecyclerVi
         holder.itemView.expandable_layout.setInterpolator(interpolator)
         if(!expandState[position]){
             holder.itemView.expandable_layout.post {
-                holder.itemView.expandable_layout.collapse(-1, null)
+//                holder.itemView.expandable_layout.collapse(-1, null)
             }
         } else {
 

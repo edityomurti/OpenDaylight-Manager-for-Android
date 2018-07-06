@@ -14,4 +14,14 @@
     <color name="grayLight">#f4f4f4</color>
     <color name="blueDark">#324C5A</color>
     <color name="blueLight">#7FD1DB</color>
+
+    <color name="greenLight">#7bff80</color>
+    <color name="green">#2bda31</color>
+    <color name="greenDark">#306032</color>
+    <color name="blue">#202fd1</color>
+    <color name="orangeLight">#f99548</color>
+    <color name="orange">#df711c</color>
+    <color name="brown">#744302</color>
+    <color name="redLight">#ff5b5b</color>
+    <color name="redDark">#890606</color>
 </resources>

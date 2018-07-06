@@ -1,10 +1,10 @@
 package com.edityomurti.openflowmanagerapp.ui.topology
 
-
 import android.app.Activity
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 
@@ -31,14 +31,17 @@ class DeviceListFragment : Fragment() {
     lateinit var layoutManager: LinearLayoutManager
     var deviceDataList: MutableList<Device> = ArrayList()
     lateinit var sharedPreferences: SharedPreferences
+    var deviceColorList: MutableList<Int> = ArrayList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_device_list, container, false)
         activity?.title = "Devices"
 
+        setDeviceColorList()
+
         sharedPreferences = activity?.getSharedPreferences(Constants.DEFAULT_PREFS_NAME, Activity.MODE_PRIVATE)!!
-        deviceListAdapter = DeviceListAdapter(deviceDataList)
+        deviceListAdapter = DeviceListAdapter(deviceDataList, deviceColorList)
         layoutManager = LinearLayoutManager(context)
 
         setupRV()
@@ -46,6 +49,22 @@ class DeviceListFragment : Fragment() {
         getNetworkTopology()
 
         return mView
+    }
+
+    fun setDeviceColorList(){
+        deviceColorList.clear()
+        deviceColorList.add(ContextCompat.getColor(context!!, R.color.greenLight))
+        deviceColorList.add(ContextCompat.getColor(context!!, R.color.greenDark))
+        deviceColorList.add(ContextCompat.getColor(context!!, R.color.redLight))
+        deviceColorList.add(ContextCompat.getColor(context!!, R.color.blue))
+        deviceColorList.add(ContextCompat.getColor(context!!, R.color.green))
+        deviceColorList.add(ContextCompat.getColor(context!!, R.color.orange))
+        deviceColorList.add(ContextCompat.getColor(context!!, R.color.blueDark))
+        deviceColorList.add(ContextCompat.getColor(context!!, R.color.blueLight))
+        deviceColorList.add(ContextCompat.getColor(context!!, R.color.orangeLight))
+        deviceColorList.add(ContextCompat.getColor(context!!, R.color.brown))
+        deviceColorList.add(ContextCompat.getColor(context!!, R.color.red))
+        deviceColorList.add(ContextCompat.getColor(context!!, R.color.redDark))
     }
 
     fun setupRV(){
@@ -64,6 +83,7 @@ class DeviceListFragment : Fragment() {
                 showLoading(false)
                 if(response?.isSuccessful!!){
                     showNoConnection(false)
+                    showNoData(false)
                     showRV(true)
                     var deviceData: MutableList<Device> = ArrayList()
                     var nodesData = response.body()?.topologyData?.topology?.get(0)?.nodeData
@@ -98,6 +118,7 @@ class DeviceListFragment : Fragment() {
                         }
                     } else {
                         showNoData(true)
+                        showRV(false)
                     }
                 } else {
                     showNoConnection(true)
