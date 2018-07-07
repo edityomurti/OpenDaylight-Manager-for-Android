@@ -3,6 +3,7 @@ package com.edityomurti.openflowmanagerapp.ui.flow_list
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import com.edityomurti.openflowmanagerapp.utils.Constants
 import kotlinx.android.synthetic.main.item_flow.view.*
 
 class FlowListAdapter(private var context: Context,
+                      private var fragment: Fragment,
                       private var dataList: MutableList<Flow>,
                       private var nodeList: ArrayList<String>,
                       private var nodeData: NodeDataSerializable?): RecyclerView.Adapter<FlowListAdapter.FlowListViewHolder>(){
@@ -46,25 +48,27 @@ class FlowListAdapter(private var context: Context,
         holder.itemView.tv_packet_count.text = dataList[position].flowStatistics?.packetCount.toString()
         holder.itemView.tv_byte_count.text = dataList[position].flowStatistics?.byteCount.toString()
 
-        holder.itemView.card_flow_item.setOnClickListener { openDetailsFlow(dataList[position]) }
+        holder.itemView.card_flow_item.setOnClickListener { openDetailsFlow(dataList[position], position) }
     }
 
     inner class FlowListViewHolder(view: View): RecyclerView.ViewHolder(view)
 
-    fun openDetailsFlow(flow: Flow){
+    fun openDetailsFlow(flow: Flow, position: Int){
         val bundle = Bundle()
         bundle.putSerializable(Constants.OBJECT_FLOW, flow)
         val intent = Intent(context, FlowDetailsActivity::class.java)
         if(flow.flowType == Constants.DATA_TYPE_CONFIG){
             var extras = Bundle()
             extras.putSerializable(Constants.NODE_DATA, nodeData)
+            extras.putInt(Constants.FLOW_POSITION, position)
             intent.putExtras(extras)
             intent.putStringArrayListExtra(Constants.NODE_LIST, nodeList)
         } else {
 
         }
         intent.putExtras(bundle)
-        context.startActivity(intent)
+        println("onActivityResult, startActivityForResult FlowListAdapter ")
+        fragment.startActivityForResult(intent, Constants.RequestCode.OPEN_DETAILS_ACTIVITY)
     }
 
     fun setData(dataList: MutableList<Flow>){

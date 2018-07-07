@@ -1,17 +1,22 @@
 package com.edityomurti.openflowmanagerapp.ui.flow_details
 
+import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import com.edityomurti.openflowmanagerapp.R
+import com.edityomurti.openflowmanagerapp.models.flowtable.FlowTableData
 import com.edityomurti.openflowmanagerapp.models.flowtable.flow.Action
 import com.edityomurti.openflowmanagerapp.models.flowtable.flow.Flow
+import com.edityomurti.openflowmanagerapp.models.flowtable.flow.Input
+import com.edityomurti.openflowmanagerapp.models.flowtable.flow.InputData
 import com.edityomurti.openflowmanagerapp.models.topology.NodeDataSerializable
 import com.edityomurti.openflowmanagerapp.ui.flow_add.AddFlowActivity
 import com.edityomurti.openflowmanagerapp.utils.Constants
@@ -19,6 +24,7 @@ import com.edityomurti.openflowmanagerapp.utils.RestAdapter
 import kotlinx.android.synthetic.main.activity_flow_details.*
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 
 class FlowDetailsActivity : AppCompatActivity() {
@@ -30,6 +36,8 @@ class FlowDetailsActivity : AppCompatActivity() {
     lateinit var nodeList: ArrayList<String>
     var nodeData: NodeDataSerializable? = null
 
+    var position: Int? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_flow_details)
@@ -39,6 +47,8 @@ class FlowDetailsActivity : AppCompatActivity() {
         restAdapter = RestAdapter(this)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        position = intent.getIntExtra(Constants.FLOW_POSITION, 999)
 
         flow = bundle.getSerializable(Constants.OBJECT_FLOW) as Flow
         showData()
@@ -230,6 +240,84 @@ class FlowDetailsActivity : AppCompatActivity() {
         }
     }
 
+    fun checkInConfig(){
+        var isAvailableInConfig = false
+        var progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Please wait ..")
+        progressDialog.setCancelable(false)
+        progressDialog.setCanceledOnTouchOutside(false)
+        progressDialog.show()
+        restAdapter.getEndPoint().getFlowsConfig(flow.nodeId.toString(), "0")
+                .enqueue(object : Callback<FlowTableData>{
+                    override fun onResponse(call: Call<FlowTableData>?, response: Response<FlowTableData>?) {
+                        if(response?.isSuccessful!!){
+                            if(response.body()?.table?.get(0) != null && response.body()?.table?.get(0)?.flowData?.size != 0 && response.body()?.table?.get(0)?.flowData?.size != null){
+                                var flowDataList = response.body()?.table?.get(0)?.flowData
+                                for (i in flowDataList?.indices!!){
+                                    if (flowDataList[i].id == flow.id){
+                                        println("isAvailableInConfig == TRUE")
+                                        isAvailableInConfig = true
+                                        break
+                                    }
+                                }
+                            }
+                            if(isAvailableInConfig){
+                                flow.flowType = Constants.DATA_TYPE_CONFIG
+                            } else {
+                                println("isAvailableInConfig != TRUE")
+                            }
+                            progressDialog.dismiss()
+                            isSafeToDelete()
+                        } else {
+                            Log.e("Failed checkInConfig, ", "response unsuccessful")
+                            progressDialog.dismiss()
+                            Toast.makeText(this@FlowDetailsActivity, "Error", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<FlowTableData>?, t: Throwable?) {
+                        Log.e("Failed checkInConfig, ", t?.message)
+                        progressDialog.dismiss()
+                        Toast.makeText(this@FlowDetailsActivity, "Error", Toast.LENGTH_SHORT).show()
+                    }
+                })
+    }
+
+    fun isSafeToDelete(){
+        if(flow.flowType == Constants.DATA_TYPE_OPERATIONAL && isMatchNull()){
+            var alertDialog = AlertDialog.Builder(this)
+            alertDialog.setMessage("This flow doesn't has any match, it will delete all operational flow on ${flow.nodeId}. Continue?")
+            alertDialog.setPositiveButton("Continue") { dialog, which ->
+                deleteFlow()
+                dialog.dismiss()
+            }
+            alertDialog.setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            alertDialog.show()
+        } else {
+            deleteFlow()
+        }
+    }
+
+    fun isMatchNull(): Boolean{
+        var isMatchNull = true
+        var flowMatch = flow.match
+        if(flowMatch?.ethernetMatch != null){
+            isMatchNull = false
+        }
+        if(flowMatch?.inPort != null){
+            isMatchNull = false
+        }
+        if(flowMatch?.ipv4source != null){
+            isMatchNull = false
+        }
+        if(flowMatch?.ipv4destination != null){
+            isMatchNull = false
+        }
+        return isMatchNull
+    }
+
     fun deleteFlow(){
         var progressDialog = ProgressDialog(this)
         progressDialog.setMessage("Deleting ..")
@@ -247,6 +335,8 @@ class FlowDetailsActivity : AppCompatActivity() {
                             } else {
                                 Toast.makeText(this@FlowDetailsActivity, "Delete failed", Toast.LENGTH_SHORT).show()
                             }
+                            println("onActivityResult, delete setResult OK")
+                            setResult(Activity.RESULT_OK)
                             finish()
                         }
 
@@ -256,13 +346,17 @@ class FlowDetailsActivity : AppCompatActivity() {
                         }
                     })
         } else {
+            var input = Input(flow.match, 0, flow.priority, "/opendaylight-inventory:nodes/opendaylight-inventory:node[opendaylight-inventory:id='${flow.nodeId}']")
+            var inputData = InputData(input)
             restAdapter.getEndPoint()
-                    .deleteFlowOperational(flow.nodeId!!, flow.id!!)
-                    .enqueue(object : retrofit2.Callback<ResponseBody>{
+                    .deleteFlowOperational(inputData)
+                    .enqueue(object : Callback<ResponseBody>{
                         override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
                             progressDialog.dismiss()
                             if(response!!.isSuccessful){
                                 Toast.makeText(this@FlowDetailsActivity, "Flow deleted", Toast.LENGTH_SHORT).show()
+                                println("onActivityResult, delete setResult OK")
+                                setResult(Activity.RESULT_OK)
                                 finish()
                             } else {
                                 Toast.makeText(this@FlowDetailsActivity, "Delete failed", Toast.LENGTH_SHORT).show()
@@ -284,7 +378,7 @@ class FlowDetailsActivity : AppCompatActivity() {
                 var alertDialog = AlertDialog.Builder(this)
                 alertDialog.setMessage("Are you sure to delete flow ${flow.id} ?")
                 alertDialog.setPositiveButton("Yes") { dialog, which ->
-                    deleteFlow()
+                    checkInConfig()
                     dialog.dismiss()
                 }
                 alertDialog.setNegativeButton("Cancel") { dialog, _ ->
@@ -322,9 +416,15 @@ class FlowDetailsActivity : AppCompatActivity() {
     )
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        if(flow.flowType == Constants.DATA_TYPE_CONFIG){
-            menuInflater?.inflate(R.menu.menu_flow_details, menu)
+        menuInflater?.inflate(R.menu.menu_flow_details, menu)
+        if(flow.flowType == Constants.DATA_TYPE_OPERATIONAL){
+            menu?.findItem(R.id.action_edit)?.setVisible(false)
         }
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onBackPressed() {
+        setResult(Activity.RESULT_CANCELED)
+        super.onBackPressed()
     }
 }

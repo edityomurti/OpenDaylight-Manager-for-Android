@@ -1,5 +1,6 @@
 package com.edityomurti.openflowmanagerapp.ui.flow_add
 
+import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
 import android.support.v7.app.AppCompatActivity
@@ -321,6 +322,7 @@ class AddFlowActivity : AppCompatActivity() {
                         if(response!!.isSuccessful){
                             Toast.makeText(this@AddFlowActivity, "Flow Added!", Toast.LENGTH_SHORT).show()
                             progressDialog.dismiss()
+                            setResult(Activity.RESULT_OK)
                             finish()
                         } else {
                             Toast.makeText(this@AddFlowActivity, "Failed Adding Flow", Toast.LENGTH_SHORT).show()

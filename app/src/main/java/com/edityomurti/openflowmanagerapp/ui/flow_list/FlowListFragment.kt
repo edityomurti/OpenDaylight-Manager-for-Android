@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
@@ -53,7 +54,7 @@ class FlowListFragment : Fragment() {
         activity?.title = "Flow Table"
 
         sharedPreferences = activity?.getSharedPreferences(Constants.DEFAULT_PREFS_NAME, Activity.MODE_PRIVATE)!!
-        flowListAdapter = FlowListAdapter(context!!, dataList, nodeList, nodeData)
+        flowListAdapter = FlowListAdapter(context!!,this, dataList, nodeList, nodeData)
         layoutManager = LinearLayoutManager(context)
 
         setupRV()
@@ -236,7 +237,7 @@ class FlowListFragment : Fragment() {
             intent.putStringArrayListExtra(Constants.NODE_LIST, nodeList)
             intent.putExtras(extras)
             intent.putExtra(Constants.ADD_MODE, Constants.MODE_ADD)
-            startActivity(intent)
+            startActivityForResult(intent, Constants.RequestCode.OPEN_ADD_ACTIVITY)
         } else {
             Toast.makeText(context, "No devices found!", Toast.LENGTH_SHORT).show()
         }
@@ -271,5 +272,35 @@ class FlowListFragment : Fragment() {
             R.id.action_add -> openAddFlowActivity()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+        println("onActivityResult, reqCode = $requestCode , resCode = $requestCode")
+        if(resultCode == Activity.RESULT_OK){
+            if(requestCode == Constants.RequestCode.OPEN_ADD_ACTIVITY){
+                var handler = Handler()
+                var runnable = Runnable {
+                    println("onActivityResult, Refreshing Flow Data")
+                    getInventoryNodes()
+                }
+                handler.postDelayed(runnable, 1000)
+            } else if (requestCode == Constants.RequestCode.OPEN_DETAILS_ACTIVITY){
+//                val position = data?.getIntExtra(Constants.FLOW_POSITION, 999)
+//                if(position != 999){
+//                    dataList.removeAt(position!!)
+//                    flowListAdapter.notifyItemRemoved(position)
+//                }
+
+//                <!-- MUST REFRESH ALL DATA --!>
+                var handler = Handler()
+                var runnable = Runnable {
+                    println("onActivityResult, Refreshing Flow Data")
+                    getInventoryNodes()
+                }
+                handler.postDelayed(runnable, 1000)
+
+            }
+        }
     }
 }

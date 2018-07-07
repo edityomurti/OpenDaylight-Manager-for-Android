@@ -3,6 +3,8 @@ package com.edityomurti.openflowmanagerapp.utils
 import com.edityomurti.openflowmanagerapp.models.flowtable.FlowTableData
 import com.edityomurti.openflowmanagerapp.models.flowtable.flow.Flow
 import com.edityomurti.openflowmanagerapp.models.flowtable.flow.FlowDataSent
+import com.edityomurti.openflowmanagerapp.models.flowtable.flow.Input
+import com.edityomurti.openflowmanagerapp.models.flowtable.flow.InputData
 import com.edityomurti.openflowmanagerapp.models.topology.NetworkTopology
 import com.edityomurti.openflowmanagerapp.models.topology.Nodes
 import okhttp3.ResponseBody
@@ -33,7 +35,11 @@ interface Services {
     fun deleteFlowConfig(@Path("node_id") node_id: String,
                          @Path("flow_id") flow_id: String): Call<ResponseBody>
 
-    @DELETE("operational/opendaylight-inventory:nodes/node/{node_id}/table/0/flow/{flow_id}")
-    fun deleteFlowOperational(@Path("node_id") node_id: String,
-                         @Path("flow_id") flow_id: String): Call<ResponseBody>
+//    METHOD DOESN'T EXIST
+//    @DELETE("operational/opendaylight-inventory:nodes/node/{node_id}/table/0/flow/{flow_id}")
+//    fun deleteFlowOperational(@Path("node_id") node_id: String,
+//                         @Path("flow_id") flow_id: String): Call<ResponseBody>
+
+    @POST("operations/sal-flow:remove-flow")
+    fun deleteFlowOperational(@Body body: InputData): Call<ResponseBody>
 }

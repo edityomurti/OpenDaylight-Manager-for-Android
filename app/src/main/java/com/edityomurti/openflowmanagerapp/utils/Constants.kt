@@ -20,5 +20,12 @@ class Constants{
         val ADD_MODE = "ADD_MODE"
         val MODE_ADD = "MODE_ADD"
         val MODE_EDIT = "MODE_EDIT"
+
+        val FLOW_POSITION = "FLOW_POSITION"
+    }
+
+    object RequestCode {
+        val OPEN_ADD_ACTIVITY = 1001
+        val OPEN_DETAILS_ACTIVITY = 1002
     }
 }
