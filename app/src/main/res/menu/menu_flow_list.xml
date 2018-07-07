@@ -8,6 +8,12 @@
         app:showAsAction="always"/>
 
     <item
+        android:id="@+id/action_statistic"
+        android:title="refresh"
+        android:icon="@drawable/ic_visibility_white_24dp"
+        app:showAsAction="always"/>
+
+    <item
         android:id="@+id/action_refresh"
         android:title="refresh"
         android:icon="@drawable/ic_refresh_white_24dp"

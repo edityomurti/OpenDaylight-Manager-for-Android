@@ -20,74 +20,154 @@
         android:background="@color/white"
         android:foreground="?android:attr/selectableItemBackground">
         <LinearLayout
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp"
-            android:paddingLeft="14dp"
-            android:paddingRight="14dp"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:id="@+id/tv_id_node"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimary"
-                android:ellipsize="middle"
-                android:singleLine="true"
-                android:text="openflow:1"
-                android:textSize="12sp"/>
-
-            <TextView
-                android:id="@+id/tv_id_flow"
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:text="#UF$TABLE*0-619"
-                android:ellipsize="middle"
-                android:singleLine="true"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:textColor="@color/colorPrimaryDark"/>
-
+            android:layout_height="wrap_content">
             <LinearLayout
                 android:orientation="horizontal"
-                android:layout_width="0dp"
-                android:layout_weight="0.8"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center">
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:paddingLeft="14dp"
+                android:paddingRight="14dp"
+                android:gravity="center_vertical">
 
-                <ImageView
-                    android:visibility="gone"
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:src="@drawable/ic_star_red_24dp"
-                    android:layout_gravity="center_vertical"/>
                 <TextView
-                    android:id="@+id/tv_priority"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tv_id_node"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimary"
                     android:ellipsize="middle"
                     android:singleLine="true"
-                    android:text="1000"
-                    android:textSize="12sp"
-                    android:textColor="@color/red"/>
-            </LinearLayout>
+                    android:text="openflow:1"
+                    android:textSize="12sp"/>
 
-            <TextView
-                android:id="@+id/tv_flow_type"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                <TextView
+                    android:id="@+id/tv_id_flow"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:text="#UF$TABLE*0-619"
+                    android:ellipsize="middle"
+                    android:singleLine="true"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"/>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.8"
+                    android:layout_height="wrap_content"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:visibility="gone"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:src="@drawable/ic_star_red_24dp"
+                        android:layout_gravity="center_vertical"/>
+                    <TextView
+                        android:id="@+id/tv_priority"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="middle"
+                        android:singleLine="true"
+                        android:text="1000"
+                        android:textSize="12sp"
+                        android:textColor="@color/red"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_flow_type"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:ellipsize="middle"
+                    android:singleLine="true"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="12sp"
+                    android:text="operational"/>
+            </LinearLayout>
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/layout_statistic"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="end"
-                android:ellipsize="middle"
-                android:singleLine="true"
-                android:textColor="@color/colorPrimary"
-                android:textSize="12sp"
-                android:text="operational"/>
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="4dp"
+                android:paddingBottom="2dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp">
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="0.6"
+                    android:layout_height="wrap_content">
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="0.8"
+                    android:layout_height="wrap_content"
+                    android:background="@color/grayLight"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:text="packet count"
+                        android:textSize="11sp"
+                        android:textColor="@color/grayDark"/>
+                    <TextView
+                        android:id="@+id/tv_packet_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text="124"
+                        android:textSize="11sp"
+                        android:textColor="@color/grayDark"
+                        android:textStyle="bold"
+                        android:maxLines="1"
+                        android:ellipsize="end"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="0.2"
+                    android:layout_height="wrap_content">
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:background="@color/grayLight"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:text="byte count"
+                        android:textSize="11sp"
+                        android:textColor="@color/grayDark"/>
+                    <TextView
+                        android:id="@+id/tv_byte_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text="12432141"
+                        android:textSize="11sp"
+                        android:textColor="@color/grayDark"
+                        android:textStyle="bold"
+                        android:maxLines="1"
+                        android:ellipsize="end"/>
+                </RelativeLayout>
+            </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

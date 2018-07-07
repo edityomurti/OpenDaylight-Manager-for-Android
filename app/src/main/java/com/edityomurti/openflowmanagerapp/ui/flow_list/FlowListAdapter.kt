@@ -19,6 +19,8 @@ class FlowListAdapter(private var context: Context,
                       private var nodeList: ArrayList<String>,
                       private var nodeData: NodeDataSerializable?): RecyclerView.Adapter<FlowListAdapter.FlowListViewHolder>(){
 
+    var isStatisticShown = false
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FlowListViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_flow, parent, false)
 
@@ -30,10 +32,19 @@ class FlowListAdapter(private var context: Context,
     }
 
     override fun onBindViewHolder(holder: FlowListViewHolder, position: Int) {
+        println("isStatisticShown : $isStatisticShown")
+        if(isStatisticShown){
+            holder.itemView.layout_statistic.visibility = View.VISIBLE
+        } else {
+            holder.itemView.layout_statistic.visibility = View.GONE
+        }
+
         holder.itemView.tv_id_node.text = dataList[position].nodeId.toString()
         holder.itemView.tv_id_flow.text = dataList[position].id.toString()
         holder.itemView.tv_flow_type.text = dataList[position].flowType
         holder.itemView.tv_priority.text = dataList[position].priority.toString()
+        holder.itemView.tv_packet_count.text = dataList[position].flowStatistics?.packetCount.toString()
+        holder.itemView.tv_byte_count.text = dataList[position].flowStatistics?.byteCount.toString()
 
         holder.itemView.card_flow_item.setOnClickListener { openDetailsFlow(dataList[position]) }
     }
@@ -73,6 +84,11 @@ class FlowListAdapter(private var context: Context,
         this.dataList.sortWith(compareBy({it.nodeId}, {it.priority}))
         this.dataList.reverse()
         this.dataList.sortWith(compareByDescending { it.flowType })
+        notifyDataSetChanged()
+    }
+
+    fun showStatistic(isShown: Boolean){
+        this.isStatisticShown = isShown
         notifyDataSetChanged()
     }
 

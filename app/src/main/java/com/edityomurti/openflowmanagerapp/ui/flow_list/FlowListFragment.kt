@@ -44,6 +44,9 @@ class FlowListFragment : Fragment() {
 
     var nodeData: NodeDataSerializable? = null
 
+    var menu: Menu? = null
+    var isStatisticShown = false
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_flow_list, container, false)
@@ -239,6 +242,17 @@ class FlowListFragment : Fragment() {
         }
     }
 
+    fun showStatistic(){
+        if(isStatisticShown){
+            isStatisticShown = false
+            menu?.getItem(1)?.setIcon(R.drawable.design_ic_visibility)
+        } else {
+            isStatisticShown = true
+            menu?.getItem(1)?.setIcon(R.drawable.design_ic_visibility_off)
+        }
+        flowListAdapter.showStatistic(isStatisticShown)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -247,11 +261,13 @@ class FlowListFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater?.inflate(R.menu.menu_flow_list, menu)
+        this.menu = menu
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId){
             R.id.action_refresh -> getInventoryNodes()
+            R.id.action_statistic -> showStatistic()
             R.id.action_add -> openAddFlowActivity()
         }
         return super.onOptionsItemSelected(item)
