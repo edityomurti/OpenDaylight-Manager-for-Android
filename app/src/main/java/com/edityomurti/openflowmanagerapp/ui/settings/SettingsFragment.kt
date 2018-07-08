@@ -14,6 +14,7 @@ import android.view.WindowManager
 import android.widget.Toast
 
 import com.edityomurti.openflowmanagerapp.R
+import com.edityomurti.openflowmanagerapp.ui.HomeActivity
 import com.edityomurti.openflowmanagerapp.utils.Constants
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.android.synthetic.main.fragment_settings.view.*
@@ -113,6 +114,7 @@ class SettingsFragment : Fragment() {
         getData()
         Toast.makeText(context, "Settings Saved!", Toast.LENGTH_SHORT).show()
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+        (activity as HomeActivity).setNavigationHeaderData()
     }
 
 }

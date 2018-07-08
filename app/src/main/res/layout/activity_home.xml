@@ -33,6 +33,7 @@
         android:layout_gravity="start"
         android:background="@color/colorPrimaryDark"
         app:menu="@menu/menu_side_drawer"
+        app:headerLayout="@layout/nav_header_home"
         app:itemIconTint="@color/side_nav_text_color"
         app:itemTextColor="@color/side_nav_text_color"
         app:itemBackground="@drawable/side_nav_menu_color"/>

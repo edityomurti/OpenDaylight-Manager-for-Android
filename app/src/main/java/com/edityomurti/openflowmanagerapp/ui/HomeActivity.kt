@@ -1,12 +1,15 @@
 package com.edityomurti.openflowmanagerapp.ui
 
+import android.app.Activity
 import android.content.Context
+import android.content.SharedPreferences
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import com.edityomurti.openflowmanagerapp.R
 import com.edityomurti.openflowmanagerapp.ui.flow_list.FlowListFragment
 import com.edityomurti.openflowmanagerapp.ui.settings.SettingsFragment
@@ -21,9 +24,13 @@ class HomeActivity : AppCompatActivity() {
     lateinit var flowListFragment: FlowListFragment
     lateinit var settingsFragment: SettingsFragment
 
+    lateinit var sharedPreferences: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+        sharedPreferences = getSharedPreferences(Constants.DEFAULT_PREFS_NAME, Activity.MODE_PRIVATE)!!
 
         setSupportActionBar(toolbar)
         toolbar.setTitleTextColor(ContextCompat.getColor(this@HomeActivity, R.color.white))
@@ -35,6 +42,8 @@ class HomeActivity : AppCompatActivity() {
         selectDeviceListFragment()
 
         drawer_layout.setStatusBarBackgroundColor(ContextCompat.getColor(this@HomeActivity, R.color.colorPrimary))
+        setNavigationHeaderData()
+
         nav_view.setNavigationItemSelectedListener { menuItem ->
             menuItem.isChecked = true
             drawer_layout.closeDrawers()
@@ -54,6 +63,32 @@ class HomeActivity : AppCompatActivity() {
         }
 
         nav_view.setCheckedItem(0)
+    }
+
+    fun setNavigationHeaderData(){
+        var username: String? = null
+        var ipAddress: String? = null
+        var portAddress: String? = null
+
+        val navView = nav_view.getHeaderView(0)
+
+        if(!sharedPreferences.getString(Constants.CONTROLLER_USERNAME, null).isNullOrEmpty()){
+            username = sharedPreferences.getString(Constants.CONTROLLER_USERNAME, null)
+            val tvUsername = navView.findViewById<TextView>(R.id.tv_username)
+            tvUsername.text = username
+        }
+
+        if(!sharedPreferences.getString(Constants.CONTROLLER_IP_ADDRESS, null).isNullOrEmpty()){
+            ipAddress = sharedPreferences.getString(Constants.CONTROLLER_IP_ADDRESS, null)
+            val tvAddress = navView.findViewById<TextView>(R.id.tv_ip_controller)
+            tvAddress.setText(ipAddress)
+        }
+
+        if(!sharedPreferences.getString(Constants.CONTROLLER_PORT_ADDRESS, null).isNullOrEmpty()){
+            portAddress = ":" + sharedPreferences.getString(Constants.CONTROLLER_PORT_ADDRESS, null)
+            val tvAddress = navView.findViewById<TextView>(R.id.tv_ip_controller)
+            tvAddress.setText("" + tvAddress.getText() + portAddress)
+        }
     }
 
     fun selectDeviceListFragment(){
