@@ -4,6 +4,7 @@ import java.io.Serializable
 import java.math.BigInteger
 
 data class Flow(
+        @Transient
         var flowType: String? = null,
         var nodeId: String? = null,
         @SerializedName("id")

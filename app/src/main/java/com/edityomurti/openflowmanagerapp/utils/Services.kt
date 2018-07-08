@@ -27,7 +27,7 @@ interface Services {
     fun getNetworkTopology(): Call<NetworkTopology>
 
     @PUT("config/opendaylight-inventory:nodes/node/{node_id}/table/0/flow/{flow_id}")
-    fun postFlow(@Path("node_id") node_id: String,
+    fun postFlow(@Path("node_id", encoded = true) node_id: String,
                  @Path("flow_id") flow_id: String,
                  @Body body: FlowDataSent): Call<ResponseBody>
 

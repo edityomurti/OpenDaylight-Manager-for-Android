@@ -23,6 +23,7 @@ import retrofit2.Call
 import retrofit2.Response
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.view.inputmethod.InputMethodManager
+import java.net.URLEncoder
 
 class AddFlowActivity : AppCompatActivity() {
     val TAG_SELECT_DEVICE_FRAGMENT = "TAG_SELECT_DEVICE_FRAGMENT"
@@ -308,8 +309,13 @@ class AddFlowActivity : AppCompatActivity() {
         progressDialog.setCanceledOnTouchOutside(false)
         progressDialog.show()
 
-        val nodeId = newFlow.nodeId
+        var nodeId = newFlow.nodeId
         newFlow.nodeId = null
+
+        if(!modeAdd){
+            nodeId = URLEncoder.encode(nodeId, "utf-8")
+            println("ENCODING FLOW NODE ID to : ${nodeId}")
+        }
 
         var flowData: MutableList<Flow> = ArrayList()
         flowData.add(newFlow)
