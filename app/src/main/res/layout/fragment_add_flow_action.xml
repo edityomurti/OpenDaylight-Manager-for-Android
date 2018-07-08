@@ -82,7 +82,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:foreground="?android:attr/selectableItemBackground"
-                    android:text="ADD ACTION (OPTIONAL)"
+                    android:text="ADD ACTION"
                     android:textStyle="bold"
                     android:textColor="@color/white"/>
             </LinearLayout>

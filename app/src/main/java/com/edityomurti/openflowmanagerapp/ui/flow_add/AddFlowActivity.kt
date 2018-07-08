@@ -9,11 +9,8 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import com.edityomurti.openflowmanagerapp.R
-import com.edityomurti.openflowmanagerapp.models.flowtable.FlowTable
-import com.edityomurti.openflowmanagerapp.models.flowtable.FlowTableData
 import com.edityomurti.openflowmanagerapp.models.flowtable.flow.Flow
 import com.edityomurti.openflowmanagerapp.models.flowtable.flow.FlowDataSent
-import com.edityomurti.openflowmanagerapp.models.topology.Node
 import com.edityomurti.openflowmanagerapp.models.topology.NodeDataSerializable
 import com.edityomurti.openflowmanagerapp.utils.Constants
 import com.edityomurti.openflowmanagerapp.utils.RestAdapter
@@ -21,7 +18,6 @@ import kotlinx.android.synthetic.main.activity_add_flow.*
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
-import android.content.Context.INPUT_METHOD_SERVICE
 import android.view.inputmethod.InputMethodManager
 import java.net.URLEncoder
 
@@ -66,7 +62,6 @@ class AddFlowActivity : AppCompatActivity() {
         nodeList = intent.getStringArrayListExtra(Constants.NODE_LIST)
         nodeData = intent.getSerializableExtra(Constants.NODE_DATA) as NodeDataSerializable
 
-
         modeAdd = addMode == Constants.MODE_ADD
 
         if(modeAdd){
@@ -82,7 +77,6 @@ class AddFlowActivity : AppCompatActivity() {
         matchFragment = AddFlowMatchFragment.newInstance(nodeData!!)
         actionFragment = AddFlowActionFragment.newInstance(nodeData!!)
         reviewFragment = AddFlowReviewFragment()
-
         restAdapter = RestAdapter(this)
 
         setNavigation()
@@ -211,9 +205,7 @@ class AddFlowActivity : AppCompatActivity() {
         if(supportFragmentManager.findFragmentByTag(TAG_GENERAL_PROPERTIES_FRAGMENT) != null){
             transaction.show(supportFragmentManager.findFragmentByTag(TAG_GENERAL_PROPERTIES_FRAGMENT))
             generalPropertiesFragment.setData()
-            println("AddFlow, NOT show generalProperties fragment")
         }else {
-            println("AddFlow, show generalProperties fragment")
             transaction.add(R.id.fragment_container, generalPropertiesFragment, TAG_GENERAL_PROPERTIES_FRAGMENT)
             val focus = this.currentFocus
             if(focus != null){
@@ -326,7 +318,11 @@ class AddFlowActivity : AppCompatActivity() {
                 enqueue(object : retrofit2.Callback<ResponseBody>{
                     override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
                         if(response!!.isSuccessful){
-                            Toast.makeText(this@AddFlowActivity, "Flow Added!", Toast.LENGTH_SHORT).show()
+                            if(modeAdd){
+                                Toast.makeText(this@AddFlowActivity, "Flow Added!", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this@AddFlowActivity, "Flow Updated!", Toast.LENGTH_SHORT).show()
+                            }
                             progressDialog.dismiss()
                             setResult(Activity.RESULT_OK)
                             finish()

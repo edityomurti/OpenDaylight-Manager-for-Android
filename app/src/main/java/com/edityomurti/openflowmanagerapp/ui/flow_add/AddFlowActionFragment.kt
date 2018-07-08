@@ -19,6 +19,10 @@ import com.edityomurti.openflowmanagerapp.models.topology.NodeDataSerializable
 import com.edityomurti.openflowmanagerapp.utils.Constants
 import kotlinx.android.synthetic.main.fragment_add_flow_action.view.*
 import kotlinx.android.synthetic.main.layout_action_controller.view.*
+import kotlinx.android.synthetic.main.layout_action_drop.view.*
+import kotlinx.android.synthetic.main.layout_action_flood.view.*
+import kotlinx.android.synthetic.main.layout_action_flood_all.view.*
+import kotlinx.android.synthetic.main.layout_action_normal.*
 import kotlinx.android.synthetic.main.layout_action_normal.view.*
 import kotlinx.android.synthetic.main.layout_action_output_port.view.*
 import kotlinx.android.synthetic.main.layout_action_output_port_2.view.*
@@ -47,6 +51,9 @@ class AddFlowActionFragment : Fragment() {
     val VALUE_CANT_BE_BLANK = "Cannot be blank"
     val VALUE_ERROR = "Value must between 0 - $VALUE_MAX"
 
+    var modeAdd = true
+    var inflater: LayoutInflater? = null
+
     companion object {
         fun newInstance(nodeData: NodeDataSerializable): AddFlowActionFragment{
             val args = Bundle()
@@ -61,8 +68,9 @@ class AddFlowActionFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_add_flow_action, container, false)
+        this.inflater = inflater
 
-        setData()
+        newFlow = (activity as AddFlowActivity).getFlow()
 
         if(arguments != null){
             var nodeList: ArrayList<String>? = null
@@ -77,6 +85,7 @@ class AddFlowActionFragment : Fragment() {
         }
 
         setDefaultData()
+        setData()
 
         var alertDialog = AlertDialog.Builder(context)
         var arrayAdapter = ArrayAdapter<String>(context, android.R.layout.simple_list_item_1)
@@ -130,9 +139,157 @@ class AddFlowActionFragment : Fragment() {
     }
 
     fun setData(){
+        this.modeAdd = (activity as AddFlowActivity).getMode()
+
         (activity as AddFlowActivity).setDataStatus(false)
-        newFlow = (activity as AddFlowActivity).getFlow()
         mView.tv_device.text = newFlow!!.nodeId
+
+        if(modeAdd){
+
+        } else {
+            mView.btn_add_action.visibility = View.GONE
+
+            var nodeId = newFlow?.nodeId
+            var actionControllerMaxLength: Int? = null
+            var actionDrop = false
+            var actionNormalMaxLength: Int? = null
+            var actionFlood = false
+            var actionFloodAll = false
+            var outputPortData: MutableList<OutputPort> = ArrayList()
+
+            if(newFlow?.instructions != null && newFlow?.instructions?.instruction!![0].applyActions != null){
+                var mActionData = newFlow?.instructions?.instruction!![0].applyActions?.actionData
+                for(i in mActionData?.indices!!){
+                    if(mActionData[i].outputAction?.outputNodeConnector.equals("CONTROLLER")){
+                        actionControllerMaxLength = mActionData[i].outputAction?.maxLength
+                    } else if(mActionData[i].outputAction?.outputNodeConnector.equals("NORMAL")){
+                        actionNormalMaxLength = mActionData[i].outputAction?.maxLength
+                    } else if(mActionData[i].outputAction?.outputNodeConnector.equals("FLOOD")){
+                        actionFlood = true
+                    } else if(mActionData[i].outputAction?.outputNodeConnector.equals("FLOOD_ALL")){
+                        actionFloodAll = true
+                    } else if(mActionData[i].dropAction != null){
+                        actionDrop = true
+                    } else {
+//                    var outputPort = inPort?.substring(0, inPort.lastIndexOf(":")+1) + actionData[i].outputAction?.outputNodeConnector
+                        var outputPort = nodeId + ":" + mActionData[i].outputAction?.outputNodeConnector
+                        var outputPortMaxLength = mActionData[i].outputAction?.maxLength
+
+                        outputPortData.add(OutputPort(outputPort, outputPortMaxLength))
+                    }
+                }
+            }
+            if(actionDrop){
+                try{
+                    mView.tv_action_drop.visibility = View.VISIBLE
+                } catch (e: Exception){
+                    addView(0)
+
+                    mView.tv_action_drop.visibility = View.VISIBLE
+                }
+            }
+
+            if(actionFlood){
+                try{
+                    mView.tv_action_flood.visibility = View.VISIBLE
+                } catch (e: Exception){
+                    addView(1)
+
+                    mView.tv_action_flood.visibility = View.VISIBLE
+                }
+            }
+
+            if(actionFloodAll){
+                try{
+                    mView.tv_action_flood_all.visibility = View.VISIBLE
+                } catch (e: Exception){
+                    addView(2)
+
+                    mView.tv_action_flood_all.visibility = View.VISIBLE
+                }
+            }
+
+            if(actionControllerMaxLength != null){
+                try{
+                    mView.et_controller_max_length.visibility = View.VISIBLE
+                    mView.et_controller_max_length.setText(actionControllerMaxLength.toString())
+                } catch (e: Exception){
+                    addView(3)
+
+                    mView.et_controller_max_length.visibility = View.VISIBLE
+                    mView.et_controller_max_length.setText(actionControllerMaxLength.toString())
+                }
+            }
+
+            if(actionNormalMaxLength != null){
+                try{
+                    mView.et_normal_max_length.visibility = View.VISIBLE
+                    mView.et_normal_max_length.setText(actionNormalMaxLength.toString())
+                } catch (e: Exception){
+                    addView(4)
+
+                    mView.et_normal_max_length.visibility = View.VISIBLE
+                    mView.et_normal_max_length.setText(actionNormalMaxLength.toString())
+                }
+            }
+
+            println("AddFlowMatch, outputPortData.size : ${outputPortData.size}")
+            if(outputPortData.size != 0){
+                try{
+                    var outputPort1 = outputPortData[0].outputPort
+                    mView.spinner_output_port.visibility = View.VISIBLE
+                    var spinnerPos = arrayAdapterPort?.getPosition(outputPort1)
+                    mView.spinner_output_port.setSelection(spinnerPos!!)
+                    mView.et_output_port_maxlength.setText(outputPortData[0].outputMaxLength!!.toString())
+                } catch (e: Exception){
+                    addView(5)
+
+                    var outputPort1 = outputPortData[0].outputPort
+                    mView.spinner_output_port.visibility = View.VISIBLE
+                    var spinnerPos = arrayAdapterPort?.getPosition(outputPort1)
+                    mView.spinner_output_port.setSelection(spinnerPos!!)
+                    mView.et_output_port_maxlength.setText(outputPortData[0].outputMaxLength!!.toString())
+                }
+
+                if(outputPortData.size > 1){
+                    try{
+                        var outputPort2 = outputPortData[1].outputPort
+                        mView.spinner_output_port_2.visibility = View.VISIBLE
+                        var spinnerPos = arrayAdapterPort?.getPosition(outputPort2)
+                        mView.spinner_output_port_2.setSelection(spinnerPos!!)
+                        mView.et_output_port_2_max_length.setText(outputPortData[1].outputMaxLength!!.toString())
+                    } catch (e: Exception){
+                        addView(6)
+
+                        var outputPort2 = outputPortData[1].outputPort
+                        mView.spinner_output_port_2.visibility = View.VISIBLE
+                        var spinnerPos = arrayAdapterPort?.getPosition(outputPort2)
+                        mView.spinner_output_port_2.setSelection(spinnerPos!!)
+                        mView.et_output_port_2_max_length.setText(outputPortData[1].outputMaxLength!!.toString())
+                    }
+                }
+            }
+        }
+    }
+
+    fun addView(which: Int){
+        val view = inflater?.inflate(actionData[which].layoutView, null, false)
+        val btnDelete = view?.findViewById<ImageView>(R.id.iv_delete)
+        val action = actionData[which]
+
+        btnDelete?.visibility = View.GONE
+
+        if(action.propId == tag_action_output_port){
+            val spinnerPort = view?.findViewById<Spinner>(R.id.spinner_output_port)
+            spinnerPort?.adapter = arrayAdapterPort
+        } else if(action.propId == tag_action_output_port_2){
+            val spinnerPort = view?.findViewById<Spinner>(R.id.spinner_output_port_2)
+            spinnerPort?.adapter = arrayAdapterPort
+        }
+
+        selectedActionData.add(action)
+
+        mView.ll_action.addView(view)
     }
 
     fun setDefaultData(){
@@ -288,4 +445,9 @@ class AddFlowActionFragment : Fragment() {
 
         return newFlow!!
     }
+
+    data class OutputPort(
+            var outputPort: String?,
+            var outputMaxLength: Int?
+    )
 }

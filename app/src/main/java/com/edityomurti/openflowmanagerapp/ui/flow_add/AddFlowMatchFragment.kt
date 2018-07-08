@@ -1,11 +1,10 @@
 package com.edityomurti.openflowmanagerapp.ui.flow_add
 
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +18,6 @@ import com.edityomurti.openflowmanagerapp.models.FlowProperties
 import com.edityomurti.openflowmanagerapp.models.flowtable.flow.*
 import com.edityomurti.openflowmanagerapp.models.topology.NodeDataSerializable
 import com.edityomurti.openflowmanagerapp.utils.Constants
-import com.rengwuxian.materialedittext.MaterialEditText
 import kotlinx.android.synthetic.main.fragment_add_flow_match.view.*
 import kotlinx.android.synthetic.main.layout_match_ethernet_type.view.*
 import kotlinx.android.synthetic.main.layout_match_in_port.view.*
@@ -53,6 +51,9 @@ class AddFlowMatchFragment : Fragment() {
     val VALUE_MAC_ADDR_ERROR = "INVALID MAC ADDRESS"
     val VALUE_IP_ADDR_ERROR = "Should have valid IP with netmask \"/\" separated"
 
+    var modeAdd = true
+    var inflater: LayoutInflater? = null
+
     companion object {
         fun newInstance(nodeData: NodeDataSerializable): AddFlowMatchFragment{
             val args = Bundle()
@@ -67,10 +68,9 @@ class AddFlowMatchFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_add_flow_match, container, false)
+        this.inflater = inflater
 
-        activity?.title = "Add Flow: Add Match"
-
-        setData()
+        newFlow = (activity as AddFlowActivity).getFlow()
 
         if(arguments != null){
             var nodeList: ArrayList<String>? = null
@@ -85,6 +85,7 @@ class AddFlowMatchFragment : Fragment() {
         }
 
         setDefaultData()
+        setData()
 
         var alertDialog = AlertDialog.Builder(context)
         var arrayAdapter = ArrayAdapter<String>(context, android.R.layout.simple_list_item_1)
@@ -92,7 +93,7 @@ class AddFlowMatchFragment : Fragment() {
             arrayAdapter.add(matchData[i].propName)
         }
 
-            alertDialog.setAdapter(arrayAdapter) { dialog, which ->
+        alertDialog.setAdapter(arrayAdapter) { dialog, which ->
             val view = inflater.inflate(matchData[which].layoutView, null, false)
             val btnDelete = view.findViewById<ImageView>(R.id.iv_delete)
             val match = matchData[which]
@@ -173,9 +174,110 @@ class AddFlowMatchFragment : Fragment() {
     }
 
     fun setData(){
+        this.modeAdd = (activity as AddFlowActivity).getMode()
+
         (activity as AddFlowActivity).setDataStatus(false)
-        newFlow = (activity as AddFlowActivity).getFlow()
         mView.tv_device.text = newFlow!!.nodeId
+
+        val inPortMatch = newFlow?.match?.inPort
+        val ethernetType = newFlow?.match?.ethernetMatch?.ethernetType
+        val macSource = newFlow?.match?.ethernetMatch?.ethernetSource
+        val macDest = newFlow?.match?.ethernetMatch?.ethernetDestination
+        val ipv4Source = newFlow?.match?.ipv4source
+        val ipv4Dest = newFlow?.match?.ipv4destination
+
+        if(modeAdd){
+
+        } else {
+            mView.btn_add_match.visibility = View.GONE
+            if(inPortMatch != null){
+                try {
+                    mView.spinner_in_port.visibility = View.VISIBLE
+                    var spinnerPos = arrayAdapterInport?.getPosition(inPortMatch)
+                    mView.spinner_in_port.setSelection(spinnerPos!!)
+                } catch (e: Exception){
+                    addView(0)
+
+                    mView.spinner_in_port.visibility = View.VISIBLE
+                    println("inPortMatch : $inPortMatch")
+                    var spinnerPos = arrayAdapterInport?.getPosition(inPortMatch)
+                    println("inPortMatch spinner pos : $spinnerPos")
+                    mView.spinner_in_port.setSelection(spinnerPos!!)
+                }
+            }
+
+            if(ethernetType != null){
+                try{
+                    mView.et_ethernet_type.visibility = View.VISIBLE
+                    mView.et_ethernet_type.setText(ethernetType.type.toString())
+                } catch (e: Exception){
+                    addView(1)
+                    mView.et_ethernet_type.visibility = View.VISIBLE
+                    mView.et_ethernet_type.setText(ethernetType.type.toString())
+                }
+            }
+
+            if(macSource != null){
+                try {
+                    mView.et_mac_source.visibility = View.VISIBLE
+                    mView.et_mac_source.setText(macSource.address)
+                } catch (e: Exception){
+                    addView(2)
+                    mView.et_mac_source.visibility = View.VISIBLE
+                    mView.et_mac_source.setText(macSource.address)
+                }
+            }
+
+            if(macDest != null){
+                try{
+                    mView.et_mac_dest.visibility = View.VISIBLE
+                    mView.et_mac_dest.setText(macDest.address)
+                } catch (e: Exception){
+                    addView(3)
+                    mView.et_mac_dest.visibility = View.VISIBLE
+                    mView.et_mac_dest.setText(macDest.address)
+                }
+            }
+
+            if(ipv4Source != null){
+                try {
+                    mView.et_ipv4_source.visibility = View.VISIBLE
+                    mView.et_ipv4_source.setText(ipv4Source)
+                } catch (e: Exception){
+                    addView(4)
+                    mView.et_ipv4_source.visibility = View.VISIBLE
+                    mView.et_ipv4_source.setText(ipv4Source)
+                }
+            }
+
+            if(ipv4Dest != null){
+                try{
+                    mView.et_ipv4_dest.visibility = View.VISIBLE
+                    mView.et_ipv4_dest.setText(ipv4Dest)
+                } catch (e: Exception){
+                    addView(5)
+                    mView.et_ipv4_dest.visibility = View.VISIBLE
+                    mView.et_ipv4_dest.setText(ipv4Dest)
+                }
+            }
+        }
+    }
+
+    fun addView(which: Int){
+        val view = inflater?.inflate(matchData[which].layoutView, null, false)
+        val btnDelete = view?.findViewById<ImageView>(R.id.iv_delete)
+        val match = matchData[which]
+
+        btnDelete?.visibility = View.GONE
+
+        selectedMatchData.add(match)
+
+        if(match.propId == tag_match_inport){
+            val spinnerInport = view?.findViewById<Spinner>(R.id.spinner_in_port)
+            spinnerInport?.adapter = arrayAdapterInport
+        }
+
+        mView.ll_match.addView(view)
     }
 
     fun setDefaultData(){

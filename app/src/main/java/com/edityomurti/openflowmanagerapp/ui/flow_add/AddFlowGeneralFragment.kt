@@ -105,6 +105,7 @@ class AddFlowGeneralFragment : Fragment() {
             activity?.title = "Add Flow: General Properties"
         } else {
             activity?.title = "Edit Flow: General Properties"
+            mView.btn_add_properties.visibility = View.GONE
 
             val flowId = newFlow?.id
             val priority = newFlow?.priority
@@ -120,30 +121,46 @@ class AddFlowGeneralFragment : Fragment() {
 
             if(priority != null){
                 mView.et_priority.setText(priority.toString())
+                mView.et_priority.isEnabled = false
             }
 
             if(hardTimeOut != null){
                 println("AddView, adding 0")
-                addView(0)
+                try {
+                    mView.et_hard_timeout.visibility = View.VISIBLE
+                    mView.et_hard_timeout.setText(hardTimeOut.toString())
+                } catch (e: Exception){
+                    addView(0)
 
-                mView.et_hard_timeout.visibility = View.VISIBLE
-                mView.et_hard_timeout.setText(hardTimeOut.toString())
+                    mView.et_hard_timeout.visibility = View.VISIBLE
+                    mView.et_hard_timeout.setText(hardTimeOut.toString())
+                }
             }
 
             if(idleTimeOut != null){
-                println("AddView, adding 1")
-                addView(1)
+                try{
+                    mView.et_idle_timeout.visibility = View.VISIBLE
+                    mView.et_idle_timeout.setText(idleTimeOut.toString())
+                } catch (e: Exception){
+                    println("AddView, adding 1")
+                    addView(1)
 
-                mView.et_idle_timeout.visibility = View.VISIBLE
-                mView.et_idle_timeout.setText(idleTimeOut.toString())
+                    mView.et_idle_timeout.visibility = View.VISIBLE
+                    mView.et_idle_timeout.setText(idleTimeOut.toString())
+                }
             }
 
             if(cookie != null){
-                println("AddView, adding 2")
-                addView(2)
+                try {
+                    mView.et_cookie.visibility = View.VISIBLE
+                    mView.et_cookie.setText(cookie.toString())
+                } catch (e: Exception){
+                    println("AddView, adding 2")
+                    addView(2)
 
-                mView.et_cookie.visibility = View.VISIBLE
-                mView.et_cookie.setText(cookie.toString())
+                    mView.et_cookie.visibility = View.VISIBLE
+                    mView.et_cookie.setText(cookie.toString())
+                }
             }
         }
     }
@@ -166,7 +183,7 @@ class AddFlowGeneralFragment : Fragment() {
 
         btnDelete?.visibility = View.GONE
 
-//        selectedPropData.add(prop)
+        selectedPropData.add(prop)
 //                arrayAdapter.remove(prop.propName)
 //                arrayAdapter.notifyDataSetChanged()
 //        propData.remove(prop)
