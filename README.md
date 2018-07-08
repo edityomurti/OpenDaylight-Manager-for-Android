@@ -8,7 +8,7 @@ OpenDaylight Manager Mobile enables an IT Administrator to securely configure, m
 
 Download
 --------
-You can download the app on eGoogle Playstore - https://play.google.com/store/apps/details?id=com.edityomurti.openflowmanagerapp
+You can download the app on Google Playstore - https://play.google.com/store/apps/details?id=com.edityomurti.openflowmanagerapp
 
 Screenshoot
 --------
