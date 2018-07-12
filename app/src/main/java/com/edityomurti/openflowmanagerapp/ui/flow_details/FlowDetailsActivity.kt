@@ -30,6 +30,7 @@ import retrofit2.Response
 class FlowDetailsActivity : AppCompatActivity() {
 
     lateinit var flow: Flow
+    var flowType: String? = null
     lateinit var bundle: Bundle
     lateinit var restAdapter: RestAdapter
 
@@ -57,7 +58,10 @@ class FlowDetailsActivity : AppCompatActivity() {
     fun showData(){
         // General Properties
         var nodeId = flow.nodeId
-        var flowType = flow.flowType
+        flowType = flow.flowType
+        if(flowType.isNullOrEmpty()){
+            flowType = Constants.DATA_TYPE_OPERATIONAL
+        }
         val table = flow.tableId
         val flowId = flow.id
         val flowName = flow.flowName
@@ -65,6 +69,8 @@ class FlowDetailsActivity : AppCompatActivity() {
         val hardTimeout = flow.hardTimeOut
         val idleTimeout = flow.idleTimeOut
         val cookie = flow.cookie
+
+        println("isAvailableInConfig flowtype = $flowType")
 
         // Match
         val ethernetType = flow.match?.ethernetMatch?.ethernetType?.type
@@ -263,6 +269,7 @@ class FlowDetailsActivity : AppCompatActivity() {
                             }
                             if(isAvailableInConfig){
                                 flow.flowType = Constants.DATA_TYPE_CONFIG
+                                println("isAvailableInConfig CONFIG")
                             } else {
                                 println("isAvailableInConfig != TRUE")
                             }
@@ -417,8 +424,11 @@ class FlowDetailsActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater?.inflate(R.menu.menu_flow_details, menu)
-        if(flow.flowType == Constants.DATA_TYPE_OPERATIONAL){
+        if(flowType == Constants.DATA_TYPE_OPERATIONAL){
             menu?.findItem(R.id.action_edit)?.setVisible(false)
+            println("isAvailableInConfig onCreateOptionsMenu == DATA_TYPE_OPERATIONAL")
+        } else {
+            println("isAvailableInConfig onCreateOptionsMenu != DATA_TYPE_OPERATIONAL")
         }
         return super.onCreateOptionsMenu(menu)
     }
