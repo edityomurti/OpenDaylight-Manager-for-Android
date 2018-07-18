@@ -5,6 +5,12 @@ import android.os.Bundle;
 
 import com.edityomurti.openflowmanagerapp.R;
 
+/**
+ * @startuml
+ * class MainActivity
+ * @enduml
+ */
+
 public class MainActivity extends AppCompatActivity {
 
     @Override

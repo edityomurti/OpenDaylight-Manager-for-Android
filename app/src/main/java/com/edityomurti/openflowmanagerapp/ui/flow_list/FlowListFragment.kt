@@ -275,7 +275,6 @@ class FlowListFragment : Fragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
         println("onActivityResult, reqCode = $requestCode , resCode = $requestCode")
         if(resultCode == Activity.RESULT_OK){
             if(requestCode == Constants.RequestCode.OPEN_ADD_ACTIVITY){
@@ -286,12 +285,6 @@ class FlowListFragment : Fragment() {
                 }
                 handler.postDelayed(runnable, 1000)
             } else if (requestCode == Constants.RequestCode.OPEN_DETAILS_ACTIVITY){
-//                val position = data?.getIntExtra(Constants.FLOW_POSITION, 999)
-//                if(position != 999){
-//                    dataList.removeAt(position!!)
-//                    flowListAdapter.notifyItemRemoved(position)
-//                }
-
 //                <!-- MUST REFRESH ALL DATA --!>
                 var handler = Handler()
                 var runnable = Runnable {

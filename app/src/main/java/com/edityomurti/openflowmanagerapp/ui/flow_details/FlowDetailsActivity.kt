@@ -59,6 +59,7 @@ class FlowDetailsActivity : AppCompatActivity() {
         // General Properties
         var nodeId = flow.nodeId
         flowType = flow.flowType
+        println("flowType = $flowType")
         if(flowType.isNullOrEmpty()){
             flowType = Constants.DATA_TYPE_OPERATIONAL
         }

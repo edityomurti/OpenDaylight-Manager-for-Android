@@ -57,6 +57,7 @@ class FlowListAdapter(private var context: Context,
         val bundle = Bundle()
         bundle.putSerializable(Constants.OBJECT_FLOW, flow)
         val intent = Intent(context, FlowDetailsActivity::class.java)
+        println("flowType openDetailsFlow = ${flow.flowType} ")
         if(flow.flowType == Constants.DATA_TYPE_CONFIG){
             var extras = Bundle()
             extras.putSerializable(Constants.NODE_DATA, nodeData)

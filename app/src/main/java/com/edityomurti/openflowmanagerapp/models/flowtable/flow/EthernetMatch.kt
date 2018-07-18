@@ -14,7 +14,7 @@ data class EthernetMatch(
 
 class EthernetType(
         @SerializedName("type")
-        var type: Int?
+        var type: String?
 ): Serializable
 
 class EthernetSource(

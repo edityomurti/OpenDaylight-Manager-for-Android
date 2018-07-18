@@ -35,8 +35,6 @@ class RestAdapter(var context: Context) {
             PORT_NUMBER = "6633"
         }
 
-        BASE_URL = "$CONTROLLER_IP_ADDRESS:$PORT_NUMBER"
-
         if(USERNAME == null){
             USERNAME = "admin"
         }
@@ -45,11 +43,12 @@ class RestAdapter(var context: Context) {
             PASSWORD = "admin"
         }
 
+        BASE_URL = "$CONTROLLER_IP_ADDRESS:$PORT_NUMBER"
+
         var client = OkHttpClient.Builder()
                 .addInterceptor(BasicAuthInterceptor(USERNAME!!, PASSWORD!!))
                 .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .build()
-
 
         var retrofit = Retrofit.Builder()
                 .baseUrl("http://$BASE_URL/restconf/")

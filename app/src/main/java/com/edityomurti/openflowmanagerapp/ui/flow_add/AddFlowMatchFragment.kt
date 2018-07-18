@@ -319,20 +319,22 @@ class AddFlowMatchFragment : Fragment() {
                 tag_match_ehternettype -> {
                     if(!mView.et_ethernet_type.text.isNullOrEmpty() && !mView.et_ethernet_type.text.isNullOrBlank()){
                         try{
-                            val ethernetTypeValue = mView.et_ethernet_type.text.toString().toInt()
-                            if(ethernetTypeValue in 0..VALUE_MAX){
-                                mView.et_ethernet_type.error = null
-                                var ethernetType = EthernetType(ethernetTypeValue)
-                                if(ethernetMatch != null){
-                                    ethernetMatch?.ethernetType = ethernetType
-                                } else {
-                                    ethernetMatch = EthernetMatch(null, null, ethernetType)
-                                }
+                            val ethernetTypeValue = mView.et_ethernet_type.text.toString()
+                            mView.et_ethernet_type.error = null
+                            var ethernetType = EthernetType(ethernetTypeValue)
+                            if(ethernetMatch != null){
+                                ethernetMatch?.ethernetType = ethernetType
                             } else {
-                                mView.et_ethernet_type.error = VALUE_ERROR
-                                isCompleted = false
+                                ethernetMatch = EthernetMatch(null, null, ethernetType)
                             }
+//                            if(ethernetTypeValue in 0..VALUE_MAX){
+//
+//                            } else {
+//                                mView.et_ethernet_type.error = VALUE_ERROR
+//                                isCompleted = false
+//                            }
                         } catch (e: Exception){
+                            e.printStackTrace()
                             mView.et_ethernet_type.error = VALUE_ERROR
                             isCompleted = false
                         }

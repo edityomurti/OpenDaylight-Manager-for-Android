@@ -35,11 +35,6 @@ interface Services {
     fun deleteFlowConfig(@Path("node_id") node_id: String,
                          @Path("flow_id") flow_id: String): Call<ResponseBody>
 
-//    METHOD DOESN'T EXIST
-//    @DELETE("operational/opendaylight-inventory:nodes/node/{node_id}/table/0/flow/{flow_id}")
-//    fun deleteFlowOperational(@Path("node_id") node_id: String,
-//                         @Path("flow_id") flow_id: String): Call<ResponseBody>
-
     @POST("operations/sal-flow:remove-flow")
     fun deleteFlowOperational(@Body body: InputData): Call<ResponseBody>
 }
