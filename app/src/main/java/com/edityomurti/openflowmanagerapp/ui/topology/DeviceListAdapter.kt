@@ -1,7 +1,10 @@
 package com.edityomurti.openflowmanagerapp.ui.topology
 
 import android.animation.ObjectAnimator
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
+import android.content.Context.CLIPBOARD_SERVICE
 import android.provider.SyncStateContract
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
@@ -10,6 +13,7 @@ import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.edityomurti.openflowmanagerapp.R
 import com.edityomurti.openflowmanagerapp.models.topology.Device
 import com.edityomurti.openflowmanagerapp.models.topology.Link
@@ -96,6 +100,17 @@ class DeviceListAdapter(private var deviceData: MutableList<Device>, private var
 
 
             holder.itemView.tv_device_node.text = deviceData[position].deviceDesc
+            holder.itemView.cv_device.setOnLongClickListener(object : View.OnLongClickListener{
+                override fun onLongClick(v: View?): Boolean {
+                    var clipBoard: ClipboardManager? = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                    var macAddress = deviceName?.substring(5)
+                    var copyData: ClipData? = ClipData.newPlainText("text", macAddress)
+                    clipBoard?.primaryClip = copyData
+                    Toast.makeText(context, "MAC Address copied", Toast.LENGTH_SHORT).show()
+                    return true
+                }
+            })
+
             var linkDevice = deviceData[position].linkDevice
 
             if(deviceData[position].linkDevice.size != 0 && deviceData[position].linkDevice.size != null) {
