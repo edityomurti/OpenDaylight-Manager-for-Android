@@ -425,12 +425,12 @@ class FlowDetailsActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater?.inflate(R.menu.menu_flow_details, menu)
-        if(flowType == Constants.DATA_TYPE_OPERATIONAL){
-            menu?.findItem(R.id.action_edit)?.setVisible(false)
-            println("isAvailableInConfig onCreateOptionsMenu == DATA_TYPE_OPERATIONAL")
-        } else {
-            println("isAvailableInConfig onCreateOptionsMenu != DATA_TYPE_OPERATIONAL")
-        }
+//        if(flowType == Constants.DATA_TYPE_OPERATIONAL){
+//            menu?.findItem(R.id.action_edit)?.setVisible(false)
+//            println("isAvailableInConfig onCreateOptionsMenu == DATA_TYPE_OPERATIONAL")
+//        } else {
+//            println("isAvailableInConfig onCreateOptionsMenu != DATA_TYPE_OPERATIONAL")
+//        }
         return super.onCreateOptionsMenu(menu)
     }
 

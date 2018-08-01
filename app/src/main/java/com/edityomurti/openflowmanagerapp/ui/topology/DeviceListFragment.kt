@@ -99,7 +99,11 @@ class DeviceListFragment : Fragment() {
                             }
                             var deviceName = nodesData[i].nodeId
                             var deviceDesc = if(deviceType.equals(Constants.DEVICE_TYPE_SWITCH)){
-                                "${nodesData[i].terminationPointData.size-1} nodes"
+                                if(nodesData[i].terminationPointData.size != null){
+                                    "${nodesData[i].terminationPointData.size-1} nodes"
+                                } else {
+                                    "0 nodes"
+                                }
                             } else {
                                 "${nodesData[i].hostTrackerAddressesData[0].ip}"
                             }
